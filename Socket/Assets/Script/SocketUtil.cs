@@ -90,7 +90,7 @@ public class SocketUtil
             while (length > 0
                 && left > 0)
             {
-                read = soket.Receive(buffer, 8 + read, left, SocketFlags.None);
+                read = soket.Receive(buffer, read, left, SocketFlags.None);
 
                 if (read <= 0)
                 {
@@ -102,14 +102,9 @@ public class SocketUtil
                     read += read;
                     left -= read;
                 }
-
                 if (left <= 0)
                 {
                     Buffer.BlockCopy(buffer, 0, data, 0, length);
-                    if (BitConverter.IsLittleEndian) // 若为 小端模式
-                    {
-                        Array.Reverse(data); // 转换为 大端模式               
-                    }
                     return true;
                 }
             }

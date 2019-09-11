@@ -190,7 +190,7 @@ public class SocketClient
                     int protocol = SocketUtil.ReadProtocol(socketClient);
                     if (protocol > 0)
                     {
-                        byte[] data = new byte[len];
+                        byte[] data = new byte[len - 8];
                         bool read = SocketUtil.ReadContent(socketClient, buffer, data);
                         if (read)
                         {
