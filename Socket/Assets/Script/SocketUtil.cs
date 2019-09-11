@@ -172,6 +172,11 @@ public class SocketUtil
         {
             byte[] length = BitConverter.GetBytes(content.Length);
             byte[] cmd = BitConverter.GetBytes(protocol);
+            if (BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(length);
+                Array.Reverse(cmd);
+            }
             byte[] data = new byte[content.Length + 8];
             Buffer.BlockCopy(length, 0, data, 0, length.Length);//前4位代表内容长度
             Buffer.BlockCopy(cmd, 0, data, 4, cmd.Length);//中间4位代表协议

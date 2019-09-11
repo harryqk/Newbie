@@ -328,6 +328,7 @@
 /Users/harryqk/Documents/GitHub/Newbie/Socket/Temp/bin/Debug/Unity.Analytics.Editor.dll.mdb
 /Users/harryqk/Documents/GitHub/Newbie/Socket/Temp/bin/Debug/Unity.Analytics.StandardEvents.dll.mdb
 /Users/harryqk/Documents/GitHub/Newbie/Socket/Temp/bin/Debug/Unity.IvyParser.dll.mdb
+/Users/harryqk/Documents/GitHub/Newbie/Socket/obj/Debug/Assembly-CSharp.csprojAssemblyReference.cache
 /Users/harryqk/Documents/GitHub/Newbie/Socket/obj/Debug/Assembly-CSharp.csproj.CoreCompileInputs.cache
 /Users/harryqk/Documents/GitHub/Newbie/Socket/obj/Debug/Assembly-CSharp.csproj.CopyComplete
 /Users/harryqk/Documents/GitHub/Newbie/Socket/obj/Debug/Assembly-CSharp.dll
