@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading;
 using System.Timers;
 
@@ -12,8 +11,9 @@ public class SocketClient
     int serverPort = 0;
     Socket socketClient = null;
     Queue<string> queueRead = new Queue<string>();
-    Queue<byte[]> queueMove = new Queue<byte[]>();
+    Queue<MessageVO> queueMove = new Queue<MessageVO>();
     Queue<string> queueLog = new Queue<string>();
+    byte[] bufferForInt = new byte[4];
     byte[] buffer = new byte[1024 * 8];
     Thread threadConnect = null;
     Thread threadRead = null;
@@ -39,7 +39,7 @@ public class SocketClient
         return queueRead;
     }
 
-    public Queue<byte[]> getMoveMsg()
+    public Queue<MessageVO> getMoveMsg()
     {
         return queueMove;
     }
@@ -58,15 +58,6 @@ public class SocketClient
         {
             timerSend.Close();
         }
-        if (socketClient != null)
-        {
-            socketClient.Close();
-            socketClient = null;
-        }
-        if (threadRead != null)
-        {
-            threadRead.Abort();
-        }
         if (threadConnect != null)
         {
             threadConnect.Abort();
@@ -75,6 +66,17 @@ public class SocketClient
         {
             threadHeartBreak.Abort();
         }
+        if (socketClient != null)
+        {
+            socketClient.Close();
+            socketClient = null;
+        }
+        queueLog.Enqueue("关闭读线程1");
+        if (threadRead != null)
+        {
+            threadRead.Abort();
+        }
+        queueLog.Enqueue("客户端关闭");  
     }
 
     /// <summary>
@@ -92,11 +94,19 @@ public class SocketClient
     /// </summary>
     void ThreadConnect()
     {
-        IPAddress ipAddress = IPAddress.Parse(serverIp);
-        IPEndPoint localEndPoint = new IPEndPoint(ipAddress, serverPort);
-        socketClient = new Socket(localEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-        socketClient.Connect(ipAddress, serverPort);
-        OnConnected();
+        try
+        {
+            IPAddress ipAddress = IPAddress.Parse(serverIp);
+            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, serverPort);
+            socketClient = new Socket(localEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+            socketClient.Connect(ipAddress, serverPort);
+            OnConnected();
+        }
+        catch(Exception exc)
+        {
+            OnServerConnectFailed();
+            throw exc;
+        }
     }
 
     /// <summary>
@@ -105,7 +115,7 @@ public class SocketClient
     void OnConnected()
     {
         queueLog.Enqueue("连接服务器成功");
-        Receive();
+        StartReceive();
         queueLog.Enqueue("开始接受数据");
     }
 
@@ -126,7 +136,7 @@ public class SocketClient
     /// <param name="s"></param>
     public void ClientWrite(int protocol, string s)
     {
-        byte[] dataSend = SocketUtil.ConvertStrToSend(protocol, s);
+        byte[] dataSend = SocketUtil.convertStrToSend(protocol, s);
         writeByte(dataSend);
     }
 
@@ -142,7 +152,7 @@ public class SocketClient
         {
             if (socketClient.Poll(-1, SelectMode.SelectWrite))
             {
-                bool value = SocketUtil.Write(socketClient, data);
+                bool value = SocketUtil.write(socketClient, data);
                 if (!value)
                 {
                     OnWriteError();
@@ -184,37 +194,51 @@ public class SocketClient
         {
             if (socketClient.Poll(-1, SelectMode.SelectRead))
             {
-                int len = SocketUtil.ReadLength(socketClient);
+                int len = SocketUtil.readInt(socketClient, bufferForInt);
                 if (len > 0)
                 {
-                    int protocol = SocketUtil.ReadProtocol(socketClient);
+                    int protocol = SocketUtil.readInt(socketClient, bufferForInt);
                     if (protocol > 0)
                     {
-                        byte[] data = new byte[len - 8];
-                        bool read = SocketUtil.ReadContent(socketClient, buffer, data);
+                        byte[] data = new byte[len];
+                        bool read = SocketUtil.readContent(socketClient, buffer, data);
                         if (read)
                         {
-                            string strReceive = Encoding.Default.GetString(data);
-                            queueRead.Enqueue(strReceive);
+                            //string strReceive = Encoding.Default.GetString(data);
+                            //queueRead.Enqueue(strReceive);
+                            MessageVO messageVO = new MessageVO();
+                            messageVO.protocol = protocol;
+                            messageVO.data = data;
+                            queueMove.Enqueue(messageVO);
                             //Debug.Log("client read from server:" + socketClient.RemoteEndPoint + "|" + strReceive);
                         }
                         else
                         {
                             OnReadContenError();
+                            break;
                         }
                     }
                     else
                     {
                         OnReadProtocolError();
+                        break;
                     }
                 }
                 else
                 {
                     OnReadLengthError();
+                    break;
                 }
+            }
+            else if(socketClient.Poll(-1, SelectMode.SelectError))
+            {
+                OnServerDisconnected();
+                break;
             }
 
         }
+
+        OnServerDisconnected();
     }
 
     void startHeartBreakCheck()
@@ -263,7 +287,7 @@ public class SocketClient
 
     void onHeartBreakSend(object source, ElapsedEventArgs e)
     {
-        ClientWrite(Protocol.HEART_BREAK, "1");
+        ClientWrite(Protocol.Move, "1");
     }
 
     void OnReadLengthError()
@@ -285,5 +309,15 @@ public class SocketClient
     void OnWriteError()
     {
         queueLog.Enqueue("写错错误");
+    }
+
+    void OnServerDisconnected()
+    {
+        queueLog.Enqueue("服务器断开链接");
+    }
+
+    void OnServerConnectFailed()
+    {
+        queueLog.Enqueue("连接服务器失败");
     }
 }

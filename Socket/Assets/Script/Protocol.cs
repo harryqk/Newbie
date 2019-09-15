@@ -4,5 +4,8 @@ using UnityEngine;
 
 public class Protocol
 {
-    public const int HEART_BREAK = 3;
+    public const int Login = 1;
+    public const int Move = 2;
+    public const int PlayerJoin = 3;
+    public const int PlayerLeave = 4;
 }
