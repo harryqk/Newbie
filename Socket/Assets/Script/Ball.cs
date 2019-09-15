@@ -52,7 +52,7 @@ public class Ball : MonoBehaviour
     void SyncMove()
     {
         if (startMove
-        && isMe)
+         && isMe)
         {
             pass += Time.deltaTime;
             if (pass > sec)
