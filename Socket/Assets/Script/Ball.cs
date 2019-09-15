@@ -15,7 +15,7 @@ public class Ball : MonoBehaviour
 
     private void Awake()
     {
-        ball = this.transform.Find("Ball").GetComponent<RectTransform>();
+        ball = this.transform.GetComponent<RectTransform>();
     }
 
     private void Update()
@@ -51,7 +51,8 @@ public class Ball : MonoBehaviour
 
     void SyncMove()
     {
-        if (isMe)
+        if (startMove
+        && isMe)
         {
             pass += Time.deltaTime;
             if (pass > sec)
@@ -60,7 +61,8 @@ public class Ball : MonoBehaviour
                 int dir = Random.Range(1, 5);
                 lastDir = dir;
             }
-            byte[] data = SocketUtil.convertByteArrayToSend(Protocol.Move, ByteUtil.intToBytes2(lastDir));
+            byte[] content = ByteUtil.bytesCombine(ByteUtil.intToBytes2(uid), ByteUtil.intToBytes2(lastDir));
+            byte[] data = SocketUtil.convertByteArrayToSend(Protocol.Move, content);
             SceneController.getInstance().client.writeByte(data);
         }
     }

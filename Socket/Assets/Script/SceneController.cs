@@ -58,7 +58,14 @@ public class SceneController : MonoBehaviour
         GameObject obj = Instantiate(ballPrefab.gameObject);
         Ball ball = obj.GetComponent<Ball>();
         ball.SetUid(id);
+        if(id == MyId)
+        {
+            ball.SetIsMe(true);
+        }
+
         listBall.Add(ball);
+        obj.transform.SetParent(this.transform, false);
+        obj.transform.localPosition = Vector3.zero;
     }
 
     public void delBall(int id)
