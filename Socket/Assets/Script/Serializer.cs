@@ -28,5 +28,9 @@ public static class Serializer
             int dir = ByteUtil.bytesToInt2(data, 4);
             SceneController.getInstance().ballMove(id, dir);
         }
+        else if (protocol == Protocol.StartGame)
+        {
+            SceneController.getInstance().startGame();
+        }
     }
 }

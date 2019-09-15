@@ -8,4 +8,5 @@ public class Protocol
     public const int Move = 2;
     public const int PlayerJoin = 3;
     public const int PlayerLeave = 4;
+    public const int StartGame = 5;
 }

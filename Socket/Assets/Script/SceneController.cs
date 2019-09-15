@@ -48,6 +48,7 @@ public class SceneController : MonoBehaviour
         });
         btnSend.onClick.AddListener(delegate () {
             //client.ClientWrite(Protocol.Move, "client send" + client.getLocalPort());
+            client.ClientWrite(Protocol.StartGame, "start game"); ;
         });
     }
 
@@ -80,10 +81,18 @@ public class SceneController : MonoBehaviour
             Ball ball = listBall[i];
             if (ball.GetUid() == id) 
             {
-                ball.SetMove(true);
                 ball.SetDir(dir);
             }
 
+        }
+    }
+
+    public void startGame()
+    {
+        for (int i = 0; i < listBall.Count; i++)
+        {
+            Ball ball = listBall[i];
+            ball.SetMove(true);
         }
     }
 
