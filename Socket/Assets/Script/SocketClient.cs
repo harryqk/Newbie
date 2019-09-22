@@ -23,6 +23,7 @@ public class SocketClient
     System.Timers.Timer timerSend = null;
     System.Timers.Timer timerCheck = null;
     EventHandler onConnectHandler = null;
+    bool conneted = false;
     /// <summary>
     /// 连接服务器
     /// </summary>
@@ -33,6 +34,11 @@ public class SocketClient
         serverIp = ip;
         serverPort = port;
         StartConnet();
+    }
+
+    public bool isConnected()
+    {
+        return conneted;
     }
 
     public Queue<string> getReadMsg()
@@ -77,7 +83,8 @@ public class SocketClient
         {
             threadRead.Abort();
         }
-        queueLog.Enqueue("客户端关闭");  
+        queueLog.Enqueue("客户端关闭");
+        conneted = false;
     }
 
     /// <summary>
@@ -115,6 +122,7 @@ public class SocketClient
     /// </summary>
     void OnConnected()
     {
+        conneted = true;
         queueLog.Enqueue("连接服务器成功");
         StartReceive();
         queueLog.Enqueue("开始接受数据");

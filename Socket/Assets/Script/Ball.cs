@@ -8,10 +8,11 @@ public class Ball : MonoBehaviour
     float pass = 0;
     int lastDir = 0;
     const float sec = 5;
-    const float speed = 5;
+    const float speed = 0.5f;
     bool startMove = false;
     int uid = 0;
     bool isMe = false;
+    Queue<int> action = new Queue<int>();
 
     private void Awake()
     {
@@ -21,7 +22,8 @@ public class Ball : MonoBehaviour
     private void Update()
     {
         SyncMove();
-        Move();
+        SyncFrame();
+        updateMove();
     }
 
     public int GetUid()
@@ -46,7 +48,11 @@ public class Ball : MonoBehaviour
 
     public void SetDir(int dir)
     {
-        lastDir = dir;
+        if(dir != 0)
+        {
+            lastDir = dir;
+            action.Enqueue(dir);
+        }
     }
 
     void SyncMove()
@@ -59,42 +65,82 @@ public class Ball : MonoBehaviour
             {
                 pass = 0;
                 int dir = Random.Range(1, 5);
-                lastDir = dir;
+                dir = validateDir(dir);
+                byte[] content = ByteUtil.intToBytes2(dir);
+                byte[] data = SocketUtil.convertByteArrayToSend(Protocol.Move, content);
+                SceneController.getInstance().client.writeByte(data);
             }
-            byte[] content = ByteUtil.bytesCombine(ByteUtil.intToBytes2(uid), ByteUtil.intToBytes2(lastDir));
-            byte[] data = SocketUtil.convertByteArrayToSend(Protocol.Move, content);
-            SceneController.getInstance().client.writeByte(data);
+
         }
     }
 
-    void Move()
+    void updateMove()
     {
         if (!startMove)
         {
             return;
         }
 
-
         if (lastDir == 1)
         {
-            ball.anchoredPosition += new Vector2(speed * Time.deltaTime, 0);
+            ball.anchoredPosition += new Vector2(speed, 0);
         }
         else if (lastDir == 2)
         {
-            ball.anchoredPosition += new Vector2(0, -speed * Time.deltaTime);
+            ball.anchoredPosition += new Vector2(0, -speed);
         }
         else if (lastDir == 3)
         {
-            ball.anchoredPosition += new Vector2(-speed * Time.deltaTime, 0);
+            ball.anchoredPosition += new Vector2(-speed, 0);
         }
         else if (lastDir == 4)
         {
-            ball.anchoredPosition += new Vector2(0, speed * Time.deltaTime);
+            ball.anchoredPosition += new Vector2(0, speed);
         }
         else
         {
 
         }
+    }
 
+    void SyncFrame()
+    {
+        if(Time.frameCount % 15 == 0)
+        {
+            int synced = 0;
+            while(action.Count > 0)
+            {
+                if(synced > 3)
+                {
+                    break;
+                }
+                lastDir = action.Dequeue();
+                synced++;
+            }
+        }
+    }
+
+    int validateDir(int dir)
+    {
+        if(ball.anchoredPosition.x >= Screen.width / 2)
+        {
+            return 3;
+        }
+        else if(ball.anchoredPosition.x <= -Screen.width / 2)
+        {
+            return 1;
+        }
+        else if (ball.anchoredPosition.y >= Screen.height / 2)
+        {
+            return 2;
+        }
+        else if (ball.anchoredPosition.y <= -Screen.height / 2)
+        {
+            return 4;
+        }
+        else
+        {
+            return dir;
+        }
     }
 }

@@ -17,9 +17,10 @@ public class SceneController : MonoBehaviour
     }
 
     List<Ball> listBall = new List<Ball>();
-    Button btnStart;
+    Button btnConnect;
     Button btnClose;
-    Button btnSend;
+    Button btnLogin;
+    Button btnStart;
     public SocketClient client;
     Text txtLog;
     long count = 10000000;
@@ -33,20 +34,26 @@ public class SceneController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Application.targetFrameRate = 30;
-        btnStart = this.transform.Find("BtnStart").GetComponent<Button>();
+        Application.targetFrameRate = 60;
+        btnConnect = this.transform.Find("BtnConnect").GetComponent<Button>();
         btnClose = this.transform.Find("BtnClose").GetComponent<Button>();
-        btnSend = this.transform.Find("BtnSend").GetComponent<Button>();
+        btnLogin = this.transform.Find("BtnLogin").GetComponent<Button>();
+        btnStart = this.transform.Find("BtnStart").GetComponent<Button>();
         txtLog = this.transform.Find("TxtLog").GetComponent<Text>();
         ballPrefab = this.transform.Find("Ball");
         client = new SocketClient();
-        btnStart.onClick.AddListener(delegate () {
+        btnConnect.onClick.AddListener(delegate () {
             Connect();
         });
         btnClose.onClick.AddListener(delegate () {
             client.Close();
+            delAllBall();
         });
-        btnSend.onClick.AddListener(delegate () {
+        btnLogin.onClick.AddListener(delegate () {
+            //client.ClientWrite(Protocol.Move, "client send" + client.getLocalPort());
+            client.ClientWrite(Protocol.Login, "start game"); ;
+        });
+        btnStart.onClick.AddListener(delegate () {
             //client.ClientWrite(Protocol.Move, "client send" + client.getLocalPort());
             client.ClientWrite(Protocol.StartGame, "start game"); ;
         });
@@ -81,6 +88,16 @@ public class SceneController : MonoBehaviour
         }
     }
 
+    public void delAllBall()
+    {
+        for (int i = 0; i < listBall.Count; i++)
+        {
+            Ball ball = listBall[i];
+            Destroy(ball.gameObject);
+        }
+        listBall.Clear();
+    }
+
     public void ballMove(int id, int dir)
     {
         for(int i = 0; i < listBall.Count; i++)
@@ -106,7 +123,14 @@ public class SceneController : MonoBehaviour
     // Update is called once per frame
     void Connect()
     {
-        client.Connect("192.168.1.100", 1500);
+        if (!client.isConnected())
+        {
+            client.Connect("192.168.1.100", 1500);
+        }
+        else
+        {
+            txtLog.text = "已建立连接";
+        }
     }
 
     private void Update()
@@ -124,7 +148,7 @@ public class SceneController : MonoBehaviour
 && client.getMoveMsg().Count > 0)
         {
             MessageVO data = client.getMoveMsg().Dequeue();
-            Serializer.Seriaize(data.protocol, data.data);
+            Serializer.Deserialize(data.protocol, data.data);
 
         }
 

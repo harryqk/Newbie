@@ -9,4 +9,6 @@ public class Protocol
     public const int PlayerJoin = 3;
     public const int PlayerLeave = 4;
     public const int StartGame = 5;
+    public const int AddPlayer = 6;
+    public const int RemovePlayer = 7;
 }
