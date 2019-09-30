@@ -6,13 +6,14 @@ public class NetObject
 {
     int lastDir = 0;
     const float sec = 5;
-    public float speed = (float)sp / 3;
-    const int sp = 2;
+    public float speed = sp * updateFrequency;
+    const float sp = 1f;
     bool startMove = false;
     public int uid = 0;
     public bool isMe = false;
-    public int posX = 0;
-    public int posY = 0;
+    public float posX = 0;
+    public float posY = 0;
+    const int updateFrequency = 20;
 
 
     public int GetUid()

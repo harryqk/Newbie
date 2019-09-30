@@ -41,7 +41,7 @@ public class SceneController : MonoBehaviour
             Connect();
         });
         btnClose.onClick.AddListener(delegate () {
-            NetScene.getInstance().client.Close();
+            NetScene.getInstance().stopGame();
             stopGame();
         });
         btnLogin.onClick.AddListener(delegate () {

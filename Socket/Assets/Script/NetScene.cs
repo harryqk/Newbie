@@ -16,7 +16,7 @@ public class NetScene
         return _instance;
     }
 
-    List<NetObject> listBall = new List<NetObject>();
+    public List<NetObject> listBall = new List<NetObject>();
 
 
     public SocketClient client;
@@ -145,10 +145,11 @@ public class NetScene
     }
 
 
-    void stopGame()
+    public void stopGame()
     {
         client.Close();
         CloseTreadU();
         delAllBall();
+        queMes.Clear();
     }
 }

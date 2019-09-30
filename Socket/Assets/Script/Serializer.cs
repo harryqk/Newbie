@@ -131,7 +131,6 @@ public static class Serializer
                     Debug.Log("player:" + id + "action:" + dir);
                 }
             }
-
         }
         else if (protocol == Protocol.StartGame)
         {
