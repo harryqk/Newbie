@@ -116,18 +116,17 @@ public static class Serializer
         else if (protocol == Protocol.Move)
         {
             int offset = 0;
-            int haveData = ByteUtil.bytesToInt2(data, offset);
-            //Debug.Log("update move");
-            if (haveData == 1)
+            int num = ByteUtil.bytesToInt2(data, offset);
+            for (int i = 0; i < num; i++)
             {
-                offset = 4;
-                int num = data.Length / 8;
-                for (int i = 0; i < num; i++)
+                offset += 4;
+                int id = ByteUtil.bytesToInt2(data, offset);
+                offset += 4;
+                int actions = ByteUtil.bytesToInt2(data, offset);
+                for (int j = 0; j < actions; j++)
                 {
-                    int id = ByteUtil.bytesToInt2(data, offset);
                     offset += 4;
                     int dir = ByteUtil.bytesToInt2(data, offset);
-                    offset += 4;
                     Debug.Log("player:" + id + "action:" + dir);
                 }
             }

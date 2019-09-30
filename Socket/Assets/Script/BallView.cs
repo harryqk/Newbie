@@ -66,7 +66,7 @@ public class BallView : MonoBehaviour
         {
             Vector2 moveTo = new Vector2(data.posX, data.posY);
             ball.anchoredPosition = Vector2.Lerp(ball.anchoredPosition, moveTo, data.speed * Time.deltaTime);
-            Debug.Log("pos:" + data.posX + ":" + data.posY + "curPos:" + (int)ball.anchoredPosition.x + ":" + (int)ball.anchoredPosition.y);
+            //Debug.Log("pos:" + data.posX + ":" + data.posY + "curPos:" + (int)ball.anchoredPosition.x + ":" + (int)ball.anchoredPosition.y);
 
         }
     }

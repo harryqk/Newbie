@@ -54,6 +54,7 @@ public class SceneController : MonoBehaviour
             Debug.Log("click start");
             NetScene.getInstance().client.ClientWrite(Protocol.StartGame, "start game"); ;
         });
+        Screen.fullScreenMode = FullScreenMode.Windowed;
     }
 
 
