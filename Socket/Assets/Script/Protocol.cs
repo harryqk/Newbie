@@ -11,4 +11,5 @@ public class Protocol
     public const int StartGame = 5;
     public const int AddPlayer = 6;
     public const int RemovePlayer = 7;
+    public const int Update = 8;
 }

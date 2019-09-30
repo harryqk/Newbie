@@ -126,6 +126,25 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 3096794061952851996}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &64543633 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3096794061961810711, guid: 2855cdc2977194865a133d3cf243a4c6,
+    type: 3}
+  m_PrefabInstance: {fileID: 3096794061952851996}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &64543634
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 64543633}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98469990e72784be3801c1b9fd52e13f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  uid: 0
 --- !u!1 &83425315
 GameObject:
   m_ObjectHideFlags: 0
@@ -539,6 +558,7 @@ GameObject:
   - component: {fileID: 586912844}
   - component: {fileID: 586912843}
   - component: {fileID: 586912847}
+  - component: {fileID: 586912848}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -643,6 +663,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3d622de3f2924dfc9af38b039051306, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &586912848
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 586912842}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4979f91374b394cf9b8466bf486b9612, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  recycleBinCollection: []
+  cullExcessObjectsInterval: 10
+  persistBetweenScenes: 0
+  transform: {fileID: 0}
 --- !u!1 &642273255
 GameObject:
   m_ObjectHideFlags: 0
@@ -1479,5 +1515,6 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 3096794061961810707, guid: 2855cdc2977194865a133d3cf243a4c6, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 2855cdc2977194865a133d3cf243a4c6, type: 3}

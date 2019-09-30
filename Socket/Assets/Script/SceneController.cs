@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,21 +17,15 @@ public class SceneController : MonoBehaviour
         return _instance;
     }
 
-    List<Ball> listBall = new List<Ball>();
+    List<BallView> listBallView = new List<BallView>();
     Button btnConnect;
     Button btnClose;
     Button btnLogin;
     Button btnStart;
-    public SocketClient client;
     Text txtLog;
     long count = 10000000;
     Transform ballPrefab;
-    int MyId = 0;
 
-    public void SetMyId(int id)
-    {
-        MyId = id;
-    }
     // Start is called before the first frame update
     void Start()
     {
@@ -41,46 +36,44 @@ public class SceneController : MonoBehaviour
         btnStart = this.transform.Find("BtnStart").GetComponent<Button>();
         txtLog = this.transform.Find("TxtLog").GetComponent<Text>();
         ballPrefab = this.transform.Find("Ball");
-        client = new SocketClient();
+        NetScene.getInstance().client = new SocketClient();
         btnConnect.onClick.AddListener(delegate () {
             Connect();
         });
         btnClose.onClick.AddListener(delegate () {
-            client.Close();
-            delAllBall();
+            NetScene.getInstance().client.Close();
+            stopGame();
         });
         btnLogin.onClick.AddListener(delegate () {
+            Debug.Log("click login");
             //client.ClientWrite(Protocol.Move, "client send" + client.getLocalPort());
-            client.ClientWrite(Protocol.Login, "start game"); ;
+            NetScene.getInstance().client.ClientWrite(Protocol.Login, "login"); ;
         });
         btnStart.onClick.AddListener(delegate () {
             //client.ClientWrite(Protocol.Move, "client send" + client.getLocalPort());
-            client.ClientWrite(Protocol.StartGame, "start game"); ;
+            Debug.Log("click start");
+            NetScene.getInstance().client.ClientWrite(Protocol.StartGame, "start game"); ;
         });
     }
 
-    public void createBall(int id)
-    {
-        Random.InitState(client.getLocalPort());
-        GameObject obj = Instantiate(ballPrefab.gameObject);
-        Ball ball = obj.GetComponent<Ball>();
-        ball.SetUid(id);
-        if(id == MyId)
-        {
-            ball.SetIsMe(true);
-        }
 
-        listBall.Add(ball);
+    public void createBallView(int id)
+    {
+        Random.InitState(id);
+        GameObject obj = Instantiate(ballPrefab.gameObject);
+        BallView ball = obj.GetComponent<BallView>();
+        listBallView.Add(ball);
+        ball.uid = id;
         obj.transform.SetParent(this.transform, false);
         obj.transform.localPosition = Vector3.zero;
     }
 
-    public void delBall(int id)
+    public void delBallView(int id)
     {
-        for (int i = 0; i < listBall.Count; i++)
+        for (int i = 0; i < listBallView.Count; i++)
         {
-            Ball ball = listBall[i];
-            if (ball.GetUid() == id)
+            BallView ball = listBallView[i];
+            if (ball.uid == id)
             {
                 Destroy(ball.gameObject);
             }
@@ -88,44 +81,24 @@ public class SceneController : MonoBehaviour
         }
     }
 
-    public void delAllBall()
+    public void delAllBallView()
     {
-        for (int i = 0; i < listBall.Count; i++)
+        for (int i = 0; i < listBallView.Count; i++)
         {
-            Ball ball = listBall[i];
+            BallView ball = listBallView[i];
             Destroy(ball.gameObject);
         }
-        listBall.Clear();
+        listBallView.Clear();
     }
 
-    public void ballMove(int id, int dir)
-    {
-        for(int i = 0; i < listBall.Count; i++)
-        {
-            Ball ball = listBall[i];
-            if (ball.GetUid() == id) 
-            {
-                ball.SetDir(dir);
-            }
-
-        }
-    }
-
-    public void startGame()
-    {
-        for (int i = 0; i < listBall.Count; i++)
-        {
-            Ball ball = listBall[i];
-            ball.SetMove(true);
-        }
-    }
 
     // Update is called once per frame
     void Connect()
     {
-        if (!client.isConnected())
+        if (!NetScene.getInstance().client.isConnected())
         {
-            client.Connect("192.168.1.100", 1500);
+            NetScene.getInstance().client.Connect("192.168.1.100", 1500);
+            NetScene.getInstance().StartTreadUpdateByNetWork();
         }
         else
         {
@@ -135,31 +108,30 @@ public class SceneController : MonoBehaviour
 
     private void Update()
     {
-        if(client.getReadMsg() != null
-        && client.getReadMsg().Count > 0)
+
+        if(NetScene.getInstance().queMes.Count > 0)
         {
-            string s = client.getReadMsg().Dequeue();
+            MessageVO vo = NetScene.getInstance().queMes.Dequeue();
+            Serializer.Deserialize(vo.protocol, vo.data);
+        }
+
+        if (NetScene.getInstance().client.getReadMsg() != null
+        && NetScene.getInstance().client.getReadMsg().Count > 0)
+        {
+            string s = NetScene.getInstance().client.getReadMsg().Dequeue();
             txtLog.text = s;
             Debug.Log(s);
 
         }
 
-        if (client.getMoveMsg() != null
-&& client.getMoveMsg().Count > 0)
+        if (NetScene.getInstance().client.GetLog() != null
+&& NetScene.getInstance().client.GetLog().Count > 0)
         {
-            MessageVO data = client.getMoveMsg().Dequeue();
-            Serializer.Deserialize(data.protocol, data.data);
-
-        }
-
-        if (client.GetLog() != null
-&& client.GetLog().Count > 0)
-        {
-            string s = client.GetLog().Dequeue();
+            string s = NetScene.getInstance().client.GetLog().Dequeue();
             Debug.Log(s);
         }
 
-        if (client != null)
+        if (NetScene.getInstance().client != null)
         {
             count++;
 
@@ -168,5 +140,9 @@ public class SceneController : MonoBehaviour
     }
 
 
+    void stopGame()
+    {
+        delAllBallView();
+    }
 
 }
