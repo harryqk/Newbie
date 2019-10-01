@@ -22,6 +22,7 @@ public class SceneController : MonoBehaviour
     Button btnClose;
     Button btnLogin;
     Button btnStart;
+    Button btnShoot;
     Text txtLog;
     long count = 10000000;
     Transform ballPrefab;
@@ -34,6 +35,7 @@ public class SceneController : MonoBehaviour
         btnClose = this.transform.Find("BtnClose").GetComponent<Button>();
         btnLogin = this.transform.Find("BtnLogin").GetComponent<Button>();
         btnStart = this.transform.Find("BtnStart").GetComponent<Button>();
+        btnShoot = this.transform.Find("BtnShoot").GetComponent<Button>();
         txtLog = this.transform.Find("TxtLog").GetComponent<Text>();
         ballPrefab = this.transform.Find("Ball");
         NetScene.getInstance().client = new SocketClient();
@@ -53,6 +55,16 @@ public class SceneController : MonoBehaviour
             //client.ClientWrite(Protocol.Move, "client send" + client.getLocalPort());
             Debug.Log("click start");
             NetScene.getInstance().client.ClientWrite(Protocol.StartGame, "start game"); ;
+        });
+        btnShoot.onClick.AddListener(delegate () {
+            //client.ClientWrite(Protocol.Move, "client send" + client.getLocalPort());
+            Debug.Log("click shoot");
+            NetMgr.getInstance().send(Protocol.Update, ByteUtil.intToBytes2(ActionType.shoot));
+
+            //byte[] action = ByteUtil.intToBytes2(ActionType.keyboardMove);
+            //byte[] content = ByteUtil.intToBytes2(3);
+            //byte[] send = ByteUtil.bytesCombine(action, content);
+            //NetMgr.getInstance().send(Protocol.Update, send);
         });
         Screen.fullScreenMode = FullScreenMode.Windowed;
     }
@@ -77,6 +89,8 @@ public class SceneController : MonoBehaviour
             if (ball.uid == id)
             {
                 Destroy(ball.gameObject);
+                listBallView.Remove(ball);
+                return;
             }
 
         }

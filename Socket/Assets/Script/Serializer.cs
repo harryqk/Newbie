@@ -62,6 +62,9 @@ public static class Serializer
         }
         else if (protocol == Protocol.Update)
         {
+            actionSynSerialize(data);
+            NetScene.getInstance().updatePos();
+            return;
             int offset = 0;
             int haveData = ByteUtil.bytesToInt2(data, offset);
             //Debug.Log("update move");
@@ -137,8 +140,72 @@ public static class Serializer
         }
         else if (protocol == Protocol.Update)
         {
+            actionSerialize(data);
+        }
+    }
 
+    static void actionSynSerialize(byte[] data)
+    {
+        int offset = 0;
+        int actionNums = ByteUtil.bytesToInt2(data, offset);
+        offset += 4;
+        //Debug.Log("update move");
+        if (actionNums >= 0)
+        {
+            for (int i = 0; i < actionNums; i++)
+            {
+                int id = ByteUtil.bytesToInt2(data, offset);
+                offset += 4;
+                int action = ByteUtil.bytesToInt2(data, offset);
+                offset += 4;
+                switch (action)
+                {
+                    case ActionType.keyboardMove:
+                        int dir = ByteUtil.bytesToInt2(data, offset);
+                        NetScene.getInstance().ballMove(id, dir);
+                        offset += 4;
+                        break;
+                    case ActionType.shoot:
 
+                        break;
+                    case ActionType.dragMove:
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    }
+
+    static void actionSerialize(byte[] data)
+    {
+        int offset = 0;
+        int actionNums = ByteUtil.bytesToInt2(data, offset);
+        offset += 4;
+        //Debug.Log("update move");
+        if (actionNums >= 0)
+        {
+            for (int i = 0; i < actionNums; i++)
+            {
+                int id = ByteUtil.bytesToInt2(data, offset);
+                offset += 4;
+                int action = ByteUtil.bytesToInt2(data, offset);
+                offset += 4;
+                switch (action)
+                {
+                    case ActionType.keyboardMove:
+                        offset += 4;
+                        Debug.Log("move move move");
+                        break;
+                    case ActionType.shoot:
+                        Debug.Log("biu biu biu");
+                        break;
+                    case ActionType.dragMove:
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
     }
 }

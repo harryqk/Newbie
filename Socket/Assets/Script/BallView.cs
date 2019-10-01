@@ -51,9 +51,10 @@ public class BallView : MonoBehaviour
                 pass = 0;
                 int dir = Random.Range(1, 5);
                 dir = validateDir(dir);
+                byte[] action = ByteUtil.intToBytes2(ActionType.keyboardMove);
                 byte[] content = ByteUtil.intToBytes2(dir);
-                byte[] data = SocketUtil.convertByteArrayToSend(Protocol.Update, content);
-                NetScene.getInstance().client.writeByte(data);
+                byte[] send = ByteUtil.bytesCombine(action, content);
+                NetMgr.getInstance().send(Protocol.Update, send);
             }
         }
     }
