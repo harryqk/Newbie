@@ -8,13 +8,15 @@ public class BallView : MonoBehaviour
     float pass = 0;
     const float sec = 5;
     public int uid = 0;
-
+    RightNormalShooter shooter;
 
     NetObject data = null;
-    private void Awake()
+    private void Start()
     {
         ball = this.transform.GetComponent<RectTransform>();
         StartCoroutine(getData());
+        shooter = new RightNormalShooter();
+        shooter.shooter = this.gameObject;
     }
 
     IEnumerator getData()
@@ -24,6 +26,11 @@ public class BallView : MonoBehaviour
             data = NetScene.getInstance().getBall(uid);
             yield return 1;
         }
+    }
+
+    public void performShoot()
+    {
+        shooter.shoot();
     }
 
     private void Update()

@@ -26,7 +26,7 @@ public class SceneController : MonoBehaviour
     Text txtLog;
     long count = 10000000;
     Transform ballPrefab;
-
+    Transform bulletPrefab;
     // Start is called before the first frame update
     void Start()
     {
@@ -38,6 +38,7 @@ public class SceneController : MonoBehaviour
         btnShoot = this.transform.Find("BtnShoot").GetComponent<Button>();
         txtLog = this.transform.Find("TxtLog").GetComponent<Text>();
         ballPrefab = this.transform.Find("Ball");
+        bulletPrefab = this.transform.Find("Bullet");
         NetScene.getInstance().client = new SocketClient();
         btnConnect.onClick.AddListener(delegate () {
             Connect();
@@ -67,13 +68,22 @@ public class SceneController : MonoBehaviour
             //NetMgr.getInstance().send(Protocol.Update, send);
         });
         Screen.fullScreenMode = FullScreenMode.Windowed;
+        TrashManRecycleBin bin = new TrashManRecycleBin();
+        bin.instancesToPreallocate = 20;
+        bin.prefab = ballPrefab.gameObject;
+        TrashMan.manageRecycleBin(bin);
+
+        TrashManRecycleBin binBullet = new TrashManRecycleBin();
+        binBullet.instancesToPreallocate = 200;
+        binBullet.prefab = bulletPrefab.gameObject;
+        TrashMan.manageRecycleBin(binBullet);
     }
 
 
     public void createBallView(int id)
     {
         Random.InitState(id);
-        GameObject obj = Instantiate(ballPrefab.gameObject);
+        GameObject obj = TrashMan.spawn(ballPrefab.gameObject);
         BallView ball = obj.GetComponent<BallView>();
         listBallView.Add(ball);
         ball.uid = id;
@@ -88,8 +98,8 @@ public class SceneController : MonoBehaviour
             BallView ball = listBallView[i];
             if (ball.uid == id)
             {
-                Destroy(ball.gameObject);
                 listBallView.Remove(ball);
+                TrashMan.despawn(ball.gameObject);
                 return;
             }
 
@@ -101,9 +111,23 @@ public class SceneController : MonoBehaviour
         for (int i = 0; i < listBallView.Count; i++)
         {
             BallView ball = listBallView[i];
-            Destroy(ball.gameObject);
+            TrashMan.despawn(ball.gameObject);
         }
         listBallView.Clear();
+    }
+
+    public void shoot(int id) 
+    {
+        for (int i = 0; i < listBallView.Count; i++)
+        {
+            BallView ball = listBallView[i];
+            if (ball.uid == id)
+            {
+                ball.performShoot();
+                return;
+            }
+
+        }
     }
 
 

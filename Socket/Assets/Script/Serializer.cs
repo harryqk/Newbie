@@ -166,7 +166,6 @@ public static class Serializer
                         offset += 4;
                         break;
                     case ActionType.shoot:
-
                         break;
                     case ActionType.dragMove:
                         break;
@@ -198,7 +197,7 @@ public static class Serializer
                         Debug.Log("move move move");
                         break;
                     case ActionType.shoot:
-                        Debug.Log("biu biu biu");
+                        SceneController.getInstance().shoot(id);
                         break;
                     case ActionType.dragMove:
                         break;
