@@ -55,6 +55,7 @@ public class SceneController : MonoBehaviour
         btnStart.onClick.AddListener(delegate () {
             //client.ClientWrite(Protocol.Move, "client send" + client.getLocalPort());
             Debug.Log("click start");
+            SpawnMgr.getStance().startSpawn = true;
             NetScene.getInstance().client.ClientWrite(Protocol.StartGame, "start game"); ;
         });
         btnShoot.onClick.AddListener(delegate () {
@@ -71,6 +72,7 @@ public class SceneController : MonoBehaviour
         TrashManRecycleBin bin = new TrashManRecycleBin();
         bin.instancesToPreallocate = 20;
         bin.prefab = ballPrefab.gameObject;
+        ballPrefab.tag = ObjectType.Player;
         TrashMan.manageRecycleBin(bin);
 
         TrashManRecycleBin binBullet = new TrashManRecycleBin();
@@ -84,7 +86,6 @@ public class SceneController : MonoBehaviour
 
     public void createBallView(int id)
     {
-        Random.InitState(id);
         GameObject obj = TrashMan.spawn(ballPrefab.gameObject);
         BallView ball = obj.GetComponent<BallView>();
         listBallView.Add(ball);
@@ -162,6 +163,7 @@ public class SceneController : MonoBehaviour
             if (NetScene.getInstance().frame % 350 == 0)
             {
                 SpawnMgr.getStance().spawn();
+                txtLog.text = SpawnMgr.getStance().curSpawn + "/" + SpawnMgr.maxSpawn;
             }
         }
 
@@ -182,6 +184,7 @@ public class SceneController : MonoBehaviour
         }
 
         keyboardMove();
+        shoot();
     }
 
 
@@ -189,6 +192,7 @@ public class SceneController : MonoBehaviour
     {
         lastDir = 0;
         delAllBallView();
+        SpawnMgr.getStance().stop();
     }
     int lastDir = 0;
     void keyboardMove()
@@ -219,6 +223,14 @@ public class SceneController : MonoBehaviour
         byte[] send = ByteUtil.bytesCombine(action, content);
         lastDir = dir;
         NetMgr.getInstance().send(Protocol.Update, send);
+    }
+
+    void shoot()
+    {
+        if (Input.GetKeyDown(KeyCode.J))
+        {
+            NetMgr.getInstance().send(Protocol.Update, ByteUtil.intToBytes2(ActionType.shoot));
+        }
     }
 
 }

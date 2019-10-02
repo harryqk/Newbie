@@ -101,4 +101,13 @@ public class BallView : MonoBehaviour
         return dir;
 
     }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.tag.CompareTo(ObjectType.EnemyBullet) == 0)
+        {
+            TrashMan.despawn(this.gameObject);
+            return;
+        }
+    }
 }

@@ -18,6 +18,10 @@ public class NetMgr
     public void send(int prot, byte[] content)
     {
         byte[] data = SocketUtil.convertByteArrayToSend(prot, content);
-        NetScene.getInstance().client.writeByte(data);
+        if(NetScene.getInstance().client != null
+            && NetScene.getInstance().client.isConnected())
+        {
+            NetScene.getInstance().client.writeByte(data);
+        }
     }
 }

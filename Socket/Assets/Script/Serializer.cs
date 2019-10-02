@@ -130,7 +130,7 @@ public static class Serializer
                 {
                     offset += 4;
                     int dir = ByteUtil.bytesToInt2(data, offset);
-                    Debug.Log("player:" + id + "action:" + dir);
+                    //Debug.Log("player:" + id + "action:" + dir);
                 }
             }
         }
@@ -194,7 +194,7 @@ public static class Serializer
                 {
                     case ActionType.keyboardMove:
                         offset += 4;
-                        Debug.Log("move move move");
+                       //Debug.Log("move move move");
                         break;
                     case ActionType.shoot:
                         SceneController.getInstance().shoot(id);
