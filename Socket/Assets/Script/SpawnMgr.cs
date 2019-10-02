@@ -21,7 +21,6 @@ public class SpawnMgr : MonoBehaviour
 
     public void init()
     {
-        Random.InitState(1);
         enemyBallPrefab = this.transform.Find("EnemyBall");
         enemyBallPrefab.tag = ObjectType.Enemy;
         enemy = new TrashManRecycleBin();
@@ -33,86 +32,40 @@ public class SpawnMgr : MonoBehaviour
     public void stop()
     {
         startSpawn = false;
-        TrashMan.removeRecycleBin(enemy, false);
+        //TrashMan.removeRecycleBin(enemy, false);
     }
 
 
     public void spawn()
     {
-        if (!startSpawn)
-        {
-            return;
-        }
+
+        //if (!startSpawn)
+        //{
+        //    return;
+        //}
         curSpawn++;
-        if(curSpawn >= maxSpawn)
-        {
-            startSpawn = false;
-        }
+        //if(curSpawn >= maxSpawn)
+        //{
+        //    startSpawn = false;
+        //}
         int x = Random.Range(100, 200);
         int y = 250;
         for(int i = 0; i < 10; i++)
         {
             GameObject obj = TrashMan.spawn("EnemyBall");
             obj.transform.parent = GameObject.Find("Canvas").transform;
+            float speed = Random.Range(3, 5);
+            float max = Random.Range(8, 13);
             RectTransform rect = obj.GetComponent<RectTransform>();
             float startY = y - i * 50;
             EnemyBallView enemyBallView = obj.GetComponent<EnemyBallView>();
+            enemyBallView.speed = speed;
+            enemyBallView.max = max;
             enemyBallView.startY = startY;
+            enemyBallView.start = true;
             rect.anchoredPosition = new Vector2(x, startY);
         }
 
     }
-
-    void spawnLevel1() 
-    {
-        int x = Random.Range(100, 200);
-        int y = 250;
-        for (int i = 0; i < 3; i++)
-        {
-            GameObject obj = TrashMan.spawn("EnemyBall");
-            obj.transform.parent = GameObject.Find("Canvas").transform;
-            RectTransform rect = obj.GetComponent<RectTransform>();
-            float startY = y - i * 50;
-            EnemyBallView enemyBallView = obj.GetComponent<EnemyBallView>();
-            enemyBallView.startY = startY;
-            rect.anchoredPosition = new Vector2(x, startY);
-        }
-
-    }
-
-    void spawnLevel2()
-    {
-        int x = Random.Range(100, 200);
-        int y = 250;
-        for (int i = 0; i < 5; i++)
-        {
-            GameObject obj = TrashMan.spawn("EnemyBall");
-            obj.transform.parent = GameObject.Find("Canvas").transform;
-            RectTransform rect = obj.GetComponent<RectTransform>();
-            float startY = y - i * 50;
-            EnemyBallView enemyBallView = obj.GetComponent<EnemyBallView>();
-            enemyBallView.startY = startY;
-            rect.anchoredPosition = new Vector2(x, startY);
-        }
-
-    }
-
-    void spawnLevel3()
-    {
-        int x = Random.Range(100, 200);
-        int y = 250;
-        for (int i = 0; i < 5; i++)
-        {
-            GameObject obj = TrashMan.spawn("EnemyBall");
-            obj.transform.parent = GameObject.Find("Canvas").transform;
-            RectTransform rect = obj.GetComponent<RectTransform>();
-            float startY = y - i * 50;
-            EnemyBallView enemyBallView = obj.GetComponent<EnemyBallView>();
-            enemyBallView.startY = startY;
-            rect.anchoredPosition = new Vector2(x, startY);
-        }
-
-    }
-
 
 }

@@ -81,6 +81,7 @@ public class SceneController : MonoBehaviour
         TrashMan.manageRecycleBin(binBullet);
 
         SpawnMgr.getStance().init();
+        Random.InitState(1);
     }
 
 
@@ -164,6 +165,7 @@ public class SceneController : MonoBehaviour
             {
                 SpawnMgr.getStance().spawn();
                 txtLog.text = SpawnMgr.getStance().curSpawn + "/" + SpawnMgr.maxSpawn;
+                //txtLog.text = Random.Range(1, 100).ToString();
             }
         }
 
