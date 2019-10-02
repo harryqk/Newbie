@@ -77,6 +77,8 @@ public class SceneController : MonoBehaviour
         binBullet.instancesToPreallocate = 200;
         binBullet.prefab = bulletPrefab.gameObject;
         TrashMan.manageRecycleBin(binBullet);
+
+        SpawnMgr.getStance().init();
     }
 
 
@@ -89,6 +91,9 @@ public class SceneController : MonoBehaviour
         ball.uid = id;
         obj.transform.SetParent(this.transform, false);
         obj.transform.localPosition = Vector3.zero;
+        NetObject data = NetScene.getInstance().getBall(ball.uid);
+        ball.setData(data);
+
     }
 
     public void delBallView(int id)
@@ -152,6 +157,12 @@ public class SceneController : MonoBehaviour
         {
             MessageVO vo = NetScene.getInstance().queMes.Dequeue();
             Serializer.Deserialize(vo.protocol, vo.data);
+
+
+            if (NetScene.getInstance().frame % 350 == 0)
+            {
+                SpawnMgr.getStance().spawn();
+            }
         }
 
         if (NetScene.getInstance().client.getReadMsg() != null
@@ -170,18 +181,44 @@ public class SceneController : MonoBehaviour
             Debug.Log(s);
         }
 
-        if (NetScene.getInstance().client != null)
-        {
-            count++;
-
-            //client.ClientWrite(Protocol.Move, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" + count.ToString());
-        }
+        keyboardMove();
     }
 
 
     void stopGame()
     {
+        lastDir = 0;
         delAllBallView();
+    }
+    int lastDir = 0;
+    void keyboardMove()
+    {
+        int dir = 0;
+        if (Input.GetKey(KeyCode.D))
+        {
+            dir = 1;
+        }
+        else if (Input.GetKey(KeyCode.S))
+        {
+            dir = 2;
+        }
+        else if (Input.GetKey(KeyCode.A))
+        {
+            dir = 3;
+        }
+        else if (Input.GetKey(KeyCode.W))
+        {
+            dir = 4;
+        }
+        if(lastDir == dir)
+        {
+            return;
+        }
+        byte[] action = ByteUtil.intToBytes2(ActionType.keyboardMove);
+        byte[] content = ByteUtil.intToBytes2(dir);
+        byte[] send = ByteUtil.bytesCombine(action, content);
+        lastDir = dir;
+        NetMgr.getInstance().send(Protocol.Update, send);
     }
 
 }

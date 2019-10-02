@@ -22,7 +22,7 @@ public class NetScene
     public SocketClient client;
     public Queue<MessageVO> queMes = new Queue<MessageVO>();
 
-    long count = 10000000;
+    public long frame = 0;
 
     public int MyId = 0;
     Thread threadU = null;
@@ -140,6 +140,7 @@ public class NetScene
                 data.data = data1.data;
                 Serializer.SynDeserialize(data1.protocol, data1.data);
                 queMes.Enqueue(data);
+                frame++;
             }
         }
     }
@@ -147,6 +148,7 @@ public class NetScene
 
     public void stopGame()
     {
+        frame = 0;
         client.Close();
         CloseTreadU();
         delAllBall();

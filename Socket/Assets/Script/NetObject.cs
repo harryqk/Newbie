@@ -7,7 +7,7 @@ public class NetObject
     int lastDir = 0;
     const float sec = 5;
     public float speed = sp * updateFrequency;
-    const float sp = 3f;
+    const float sp = 6f;
     bool startMove = false;
     public int uid = 0;
     public bool isMe = false;

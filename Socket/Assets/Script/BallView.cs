@@ -6,7 +6,7 @@ public class BallView : MonoBehaviour
 {
     RectTransform ball;
     float pass = 0;
-    const float sec = 5;
+    const float sec = 3;
     public int uid = 0;
     RightNormalShooter shooter;
 
@@ -14,19 +14,15 @@ public class BallView : MonoBehaviour
     private void Start()
     {
         ball = this.transform.GetComponent<RectTransform>();
-        StartCoroutine(getData());
         shooter = new RightNormalShooter();
         shooter.shooter = this.gameObject;
     }
 
-    IEnumerator getData()
+    public void setData(NetObject obj) 
     {
-        while (data == null)
-        {
-            data = NetScene.getInstance().getBall(uid);
-            yield return 1;
-        }
+        data = obj;
     }
+
 
     public void performShoot()
     {
@@ -61,7 +57,7 @@ public class BallView : MonoBehaviour
                 byte[] action = ByteUtil.intToBytes2(ActionType.keyboardMove);
                 byte[] content = ByteUtil.intToBytes2(dir);
                 byte[] send = ByteUtil.bytesCombine(action, content);
-                NetMgr.getInstance().send(Protocol.Update, send);
+                //NetMgr.getInstance().send(Protocol.Update, send);
             }
         }
     }
@@ -84,19 +80,19 @@ public class BallView : MonoBehaviour
     {
         if (data != null)
         {
-            if (data.posX >= Screen.width / 2)
+            if (data.posX + 100>= Screen.width / 2)
             {
                 return 3;
             }
-            if (data.posX <= -Screen.width / 2)
+            if (data.posX - 100<= -Screen.width / 2)
             {
                 return 1;
             }
-            if (data.posY >= Screen.height / 2)
+            if (data.posY + 100 >= Screen.height / 2)
             {
                 return 2;
             }
-            if (data.posY <= -Screen.height / 2)
+            if (data.posY - 100 <= -Screen.height / 2)
             {
                 return 4;
             }

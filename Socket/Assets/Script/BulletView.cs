@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BulletView : MonoBehaviour
 {
-    float speed = 240f;
+    float speed = 360 * 1.2f * 1.2f;
     RectTransform rTran;
     public bool valid = false;
     // Start is called before the first frame update
@@ -26,5 +26,12 @@ public class BulletView : MonoBehaviour
             rTran.anchoredPosition = Vector2.zero;
             TrashMan.despawn(this.gameObject);
         }
+    }
+
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        Debug.Log("i am bullet trigger, i hitted");
+        TrashMan.despawn(this.gameObject);
     }
 }
