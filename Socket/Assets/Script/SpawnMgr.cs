@@ -5,7 +5,7 @@ using UnityEngine;
 public class SpawnMgr : MonoBehaviour
 {
     static SpawnMgr _instacne;
-    public const int maxSpawn = 10;
+    public const int maxSpawn = 3;
     public int curSpawn = 0;
     public bool startSpawn = false;
     TrashManRecycleBin enemy;
@@ -43,12 +43,12 @@ public class SpawnMgr : MonoBehaviour
         //{
         //    return;
         //}
+        if(curSpawn >= maxSpawn)
+        {
+            return;
+        }
         curSpawn++;
-        //if(curSpawn >= maxSpawn)
-        //{
-        //    startSpawn = false;
-        //}
-        int x = Random.Range(100, 200);
+        int x = 100 + curSpawn * 50;
         int y = 250;
         for(int i = 0; i < 10; i++)
         {

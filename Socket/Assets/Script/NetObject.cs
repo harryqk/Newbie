@@ -14,7 +14,7 @@ public class NetObject
     public float posX = 0;
     public float posY = 0;
     const int updateFrequency = 20;
-
+    public bool isDead = false;
 
     public int GetUid()
     {

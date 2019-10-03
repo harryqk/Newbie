@@ -39,7 +39,6 @@ public class NetScene
             NetObject ball = listBall[i];
             if (ball.uid == id)
             {
-
                 return ball;
             }
 
@@ -56,6 +55,7 @@ public class NetScene
         {
             ball.isMe = true;
         }
+        ball.isDead = false;
         listBall.Add(ball);
 
     }
@@ -153,5 +153,25 @@ public class NetScene
         CloseTreadU();
         delAllBall();
         queMes.Clear();
+    }
+
+    public void shoot()
+    {
+        NetObject netObject = getBall(MyId);
+        if (!netObject.isDead) 
+        {
+            NetMgr.getInstance().send(Protocol.Update, ByteUtil.intToBytes2(ActionType.shoot));
+        }
+
+    }
+
+    public bool isDeath(int id)
+    {
+        NetObject netObject = getBall(id);
+        if (netObject.isDead)
+        {
+            return true;
+        }
+        return false;
     }
 }

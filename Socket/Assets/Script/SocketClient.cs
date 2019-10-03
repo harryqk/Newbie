@@ -133,7 +133,7 @@ public class SocketClient
     /// </summary>
     void StartReceive()
     {
-        threadRead = new Thread(Receive);
+        threadRead = new Thread(receive);
         threadRead.IsBackground = true;
         threadRead.Start();
     }
@@ -328,5 +328,50 @@ public class SocketClient
     void OnServerConnectFailed()
     {
         queueLog.Enqueue("连接服务器失败");
+    }
+
+    public void receive()
+    {
+        while (socketClient != null
+            && socketClient.Connected == true)
+        {
+            int len = SocketUtil.readInt(socketClient, bufferForInt);
+            if (len > 0)
+            {
+                int protocol = SocketUtil.readInt(socketClient, bufferForInt);
+                if (protocol > 0)
+                {
+                    byte[] data = new byte[len];
+                    bool read = SocketUtil.readContent(socketClient, buffer, data);
+                    if (read)
+                    {
+                        //string strReceive = Encoding.Default.GetString(data);
+                        //queueRead.Enqueue(strReceive);
+                        MessageVO messageVO = new MessageVO();
+                        messageVO.protocol = protocol;
+                        messageVO.data = data;
+                        queueMove.Enqueue(messageVO);
+                        //Debug.Log("client read from server:" + socketClient.RemoteEndPoint + "|" + strReceive);
+                    }
+                    else
+                    {
+                        OnReadContenError();
+                        break;
+                    }
+                }
+                else
+                {
+                    OnReadProtocolError();
+                    break;
+                }
+            }
+            else
+            {
+                OnReadLengthError();
+                break;
+            }
+        }
+
+        OnServerDisconnected();
     }
 }

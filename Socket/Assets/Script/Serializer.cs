@@ -136,7 +136,7 @@ public static class Serializer
         }
         else if (protocol == Protocol.StartGame)
         {
-
+            SceneController.getInstance().hideUI();
         }
         else if (protocol == Protocol.Update)
         {

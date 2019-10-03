@@ -59,6 +59,7 @@ public class SceneController : MonoBehaviour
             NetScene.getInstance().client.ClientWrite(Protocol.StartGame, "start game"); ;
         });
         btnShoot.onClick.AddListener(delegate () {
+            //AlgorithmsUtil.test();
             //client.ClientWrite(Protocol.Move, "client send" + client.getLocalPort());
             Debug.Log("click shoot");
             NetMgr.getInstance().send(Protocol.Update, ByteUtil.intToBytes2(ActionType.shoot));
@@ -220,6 +221,10 @@ public class SceneController : MonoBehaviour
         {
             return;
         }
+        if (NetScene.getInstance().isDeath(NetScene.getInstance().MyId))
+        {
+            return;
+        }
         byte[] action = ByteUtil.intToBytes2(ActionType.keyboardMove);
         byte[] content = ByteUtil.intToBytes2(dir);
         byte[] send = ByteUtil.bytesCombine(action, content);
@@ -231,8 +236,18 @@ public class SceneController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.J))
         {
-            NetMgr.getInstance().send(Protocol.Update, ByteUtil.intToBytes2(ActionType.shoot));
+            NetScene.getInstance().shoot();
         }
+    }
+
+    public void hideUI()
+    {
+        btnClose.gameObject.SetActive(false);
+        btnLogin.gameObject.SetActive(false);
+        btnShoot.gameObject.SetActive(false);
+        btnStart.gameObject.SetActive(false);
+        btnConnect.gameObject.SetActive(false);
+        txtLog.gameObject.SetActive(false);
     }
 
 }
