@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
@@ -23,6 +24,10 @@ public class SceneController : MonoBehaviour
     Button btnLogin;
     Button btnStart;
     Button btnShoot;
+    DoubleClickButton btnRight;
+    DoubleClickButton btnDown;
+    DoubleClickButton btnLeft;
+    DoubleClickButton btnUp;
     Text txtLog;
     long count = 10000000;
     Transform ballPrefab;
@@ -36,6 +41,10 @@ public class SceneController : MonoBehaviour
         btnLogin = this.transform.Find("BtnLogin").GetComponent<Button>();
         btnStart = this.transform.Find("BtnStart").GetComponent<Button>();
         btnShoot = this.transform.Find("BtnShoot").GetComponent<Button>();
+        btnRight = this.transform.Find("BtnRight").GetComponent<DoubleClickButton>();
+        btnDown = this.transform.Find("BtnDown").GetComponent<DoubleClickButton>();
+        btnLeft = this.transform.Find("BtnLeft").GetComponent<DoubleClickButton>();
+        btnUp = this.transform.Find("BtnUp").GetComponent<DoubleClickButton>();
         txtLog = this.transform.Find("TxtLog").GetComponent<Text>();
         ballPrefab = this.transform.Find("Ball");
         bulletPrefab = this.transform.Find("Bullet");
@@ -69,6 +78,42 @@ public class SceneController : MonoBehaviour
             //byte[] send = ByteUtil.bytesCombine(action, content);
             //NetMgr.getInstance().send(Protocol.Update, send);
         });
+
+        btnRight.addPointerUp(delegate (object sender, EventArgs e)
+        {
+            onPointerUp(1);
+        });
+        btnRight.addPointerDown(delegate (object sender, EventArgs e)
+        {
+            onPointerDown(1);
+        });
+
+        btnDown.addPointerUp(delegate (object sender, EventArgs e)
+        {
+            onPointerUp(2);
+        });
+        btnDown.addPointerDown(delegate (object sender, EventArgs e)
+        {
+            onPointerDown(2);
+        });
+
+        btnLeft.addPointerUp(delegate (object sender, EventArgs e)
+        {
+            onPointerUp(3);
+        });
+        btnLeft.addPointerDown(delegate (object sender, EventArgs e)
+        {
+            onPointerDown(3);
+        });
+
+        btnUp.addPointerUp(delegate (object sender, EventArgs e)
+        {
+            onPointerUp(4);
+        });
+        btnUp.addPointerDown(delegate (object sender, EventArgs e)
+        {
+            onPointerDown(4);
+        });
         Screen.fullScreenMode = FullScreenMode.Windowed;
         TrashManRecycleBin bin = new TrashManRecycleBin();
         bin.instancesToPreallocate = 20;
@@ -82,7 +127,7 @@ public class SceneController : MonoBehaviour
         TrashMan.manageRecycleBin(binBullet);
 
         SpawnMgr.getStance().init();
-        Random.InitState(1);
+        UnityEngine.Random.InitState(1);
     }
 
 
@@ -144,7 +189,7 @@ public class SceneController : MonoBehaviour
     {
         if (!NetScene.getInstance().client.isConnected())
         {
-            NetScene.getInstance().client.Connect("192.168.1.100", 1500);
+            NetScene.getInstance().client.Connect("192.168.1.102", 1500);
             NetScene.getInstance().StartTreadUpdateByNetWork();
         }
         else
@@ -185,7 +230,6 @@ public class SceneController : MonoBehaviour
             string s = NetScene.getInstance().client.GetLog().Dequeue();
             Debug.Log(s);
         }
-
         keyboardMove();
         shoot();
     }
@@ -217,7 +261,8 @@ public class SceneController : MonoBehaviour
         {
             dir = 4;
         }
-        if(lastDir == dir)
+        //Debug.Log("send dir1");
+        if (lastDir == dir)
         {
             return;
         }
@@ -225,6 +270,7 @@ public class SceneController : MonoBehaviour
         {
             return;
         }
+        //Debug.Log("send dir1:");
         byte[] action = ByteUtil.intToBytes2(ActionType.keyboardMove);
         byte[] content = ByteUtil.intToBytes2(dir);
         byte[] send = ByteUtil.bytesCombine(action, content);
@@ -248,6 +294,42 @@ public class SceneController : MonoBehaviour
         btnStart.gameObject.SetActive(false);
         btnConnect.gameObject.SetActive(false);
         txtLog.gameObject.SetActive(false);
+        btnRight.gameObject.SetActive(false);
+        btnDown.gameObject.SetActive(false);
+        btnLeft.gameObject.SetActive(false);
+        btnUp.gameObject.SetActive(false);
+    }
+
+    void onPointerDown(int dir)
+    {
+        if (lastDir == dir)
+        {
+            return;
+        }
+        if (NetScene.getInstance().isDeath(NetScene.getInstance().MyId))
+        {
+            return;
+        }
+        byte[] action = ByteUtil.intToBytes2(ActionType.keyboardMove);
+        byte[] content = ByteUtil.intToBytes2(dir);
+        byte[] send = ByteUtil.bytesCombine(action, content);
+        lastDir = dir;
+        Debug.Log("send dir2:" + dir);
+        NetMgr.getInstance().send(Protocol.Update, send);
+    }
+
+    void onPointerUp(int dir)
+    {
+        if (NetScene.getInstance().isDeath(NetScene.getInstance().MyId))
+        {
+            return;
+        }
+        byte[] action = ByteUtil.intToBytes2(ActionType.keyboardMove);
+        byte[] content = ByteUtil.intToBytes2(0);
+        byte[] send = ByteUtil.bytesCombine(action, content);
+        lastDir = 0;
+        Debug.Log("send dir3:");
+        NetMgr.getInstance().send(Protocol.Update, send);
     }
 
 }
