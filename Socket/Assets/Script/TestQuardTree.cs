@@ -1,10 +1,8 @@
 ﻿using GameEngine;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class TestQuardTree : MonoBehaviour
 {
-    List<BallView> balls = new List<BallView>();
     public Transform ballPrefab = null;
     QuardTree quardTree = null;
     public void Start()
@@ -26,7 +24,6 @@ public class TestQuardTree : MonoBehaviour
             {
                 BallView ballView = TrashMan.spawn(ballPrefab.gameObject).GetComponent<BallView>();
                 ballView.rect = new Rectangle(i, j, 20, 20);
-                balls.Add(ballView);
                 quardTree.insert(ballView.rect);
             }
         }
