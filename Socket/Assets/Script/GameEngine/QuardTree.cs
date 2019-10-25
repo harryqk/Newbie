@@ -142,13 +142,20 @@ namespace GameEngine
                 split();
                 if (trees.Count > 0)
                 {
+                    List<Rectangle> removed = new List<Rectangle>();
                     foreach (Rectangle rectangle in objs)
                     {
                         int index = getIndex(rectangle);
                         if (index != -1)
                         {
                             trees[index].insert(rectangle);
+                            removed.Add(rectangle);
                         }
+                    }
+
+                    for (int i = 0; i < removed.Count; i++)
+                    {
+                        objs.Remove(removed[i]);
                     }
                 }
             }
@@ -208,6 +215,7 @@ namespace GameEngine
             {
                 root = this;
             }
+            List<Rectangle> removed = new List<Rectangle>();
             foreach (Rectangle rectangle in objs)
             {
                 int index = getIndex(rectangle);
@@ -217,6 +225,7 @@ namespace GameEngine
                     if (this != root)
                     {
                         root.insert(rectangle);
+                        removed.Add(rectangle);
                     }
 
                     // 如果矩形属于该象限 且 该象限具有子象限，则
@@ -226,7 +235,13 @@ namespace GameEngine
                     index != -1)
                 {
                     trees[index].insert(rectangle);
+                    removed.Add(rectangle);
                 }
+            }
+
+            for (int i = 0; i < removed.Count; i++)
+            {
+                objs.Remove(removed[i]);
             }
 
             foreach (QuardTree quardTree in trees)
