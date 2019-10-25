@@ -157,6 +157,7 @@ namespace GameEngine
                     {
                         objs.Remove(removed[i]);
                     }
+                    removed.Clear();
                 }
             }
         }
@@ -174,8 +175,7 @@ namespace GameEngine
                 int index = getIndex(rect);
                 if (index != -1)
                 {
-                    LinkedList<Rectangle> innerRet = new LinkedList<Rectangle>();
-                    innerRet = trees[index].getCheckList(rect);
+                    LinkedList<Rectangle> innerRet = trees[index].getCheckList(rect);
                     foreach (Rectangle rectangle in innerRet)
                     {
                         ret.AddLast(rectangle);
@@ -187,8 +187,7 @@ namespace GameEngine
                     for (int i = arr.Length - 1; i >= 0; i--)
                     {
                         index = getIndex(arr[i]);
-                        LinkedList<Rectangle> innerRet = new LinkedList<Rectangle>();
-                        innerRet = trees[index].getCheckList(rect);
+                        LinkedList<Rectangle> innerRet = trees[index].getCheckList(rect);
                         foreach (Rectangle rectangle in innerRet)
                         {
                             ret.AddLast(rectangle);
@@ -243,7 +242,7 @@ namespace GameEngine
             {
                 objs.Remove(removed[i]);
             }
-
+            removed.Clear();
             foreach (QuardTree quardTree in trees)
             {
                 quardTree.refresh(root);
