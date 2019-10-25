@@ -116,7 +116,7 @@ namespace GameEngine
         }
 
         //插入结点
-        void insert(Rectangle rect)
+        public void insert(Rectangle rect)
         {
             //如果超出边界
 
