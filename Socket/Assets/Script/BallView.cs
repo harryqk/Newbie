@@ -1,24 +1,26 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using GameEngine;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class BallView : MonoBehaviour
+public class BallView : MonoBehaviour, ICollision
 {
     RectTransform ball;
     float pass = 0;
     const float sec = 3;
     public int uid = 0;
     RightNormalShooter shooter;
-
+    public Rectangle rect;
     NetObject data = null;
+    public Text txt = null;
     private void Start()
     {
         ball = this.transform.GetComponent<RectTransform>();
         shooter = new RightNormalShooter();
         shooter.shooter = this.gameObject;
+        rect.collision = this;
     }
 
-    public void setData(NetObject obj) 
+    public void setData(NetObject obj)
     {
         data = obj;
     }
@@ -31,8 +33,9 @@ public class BallView : MonoBehaviour
 
     private void Update()
     {
-        SyncMove();
-        updateMove();
+        //SyncMove();
+        //updateMove();
+        testMove();
     }
 
 
@@ -75,16 +78,67 @@ public class BallView : MonoBehaviour
         }
     }
 
+    int testSp = 2;
+
+    public void onEnter()
+    {
+        Invoke("blink", 1);
+        Invoke("blink", 2);
+    }
+
+    void blink()
+    {
+        if (txt.text.CompareTo("0") == 0)
+        {
+            txt.text = "1";
+        }
+        else
+        {
+            txt.text = "0";
+        }
+    }
+    void testMove()
+    {
+        pass += Time.deltaTime;
+        if (pass > sec)
+        {
+            pass = 0;
+            int dir = Random.Range(1, 5);
+            dir = validateDir(dir);
+            if (dir == 1)
+            {
+                rect.updatePos(rect.origin.x + testSp, rect.origin.y);
+            }
+            else if (dir == 2)
+            {
+                rect.updatePos(rect.origin.x, rect.origin.y - testSp);
+            }
+            else if (dir == 3)
+            {
+                rect.updatePos(rect.origin.x - testSp, rect.origin.y);
+            }
+            else if (dir == 4)
+            {
+                rect.updatePos(rect.origin.x, rect.origin.y + testSp);
+            }
+            else
+            {
+
+            }
+        }
+        Vector2 vector2 = new Vector2(rect.center.x, rect.center.y);
+        ball.anchoredPosition = vector2;
+    }
 
     int validateDir(int dir)
     {
         if (data != null)
         {
-            if (data.posX + 100>= Screen.width / 2)
+            if (data.posX + 100 >= Screen.width / 2)
             {
                 return 3;
             }
-            if (data.posX - 100<= -Screen.width / 2)
+            if (data.posX - 100 <= -Screen.width / 2)
             {
                 return 1;
             }

@@ -17,6 +17,19 @@ namespace GameEngine
         public int width;
         public int height;
 
+        /// <summary>
+        /// 刷新坐标
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        public void updatePos(int x, int y)
+        {
+            origin.x = x;
+            origin.y = y;
+            center.x = origin.x + width / 2;
+            center.y = origin.y + height / 2;
+        }
+
         public Point center;
 
         /// <summary>

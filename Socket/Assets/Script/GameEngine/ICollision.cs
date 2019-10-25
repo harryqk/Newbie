@@ -3,6 +3,5 @@
     public interface ICollision
     {
         void onEnter();
-        void onLeave();
     }
 }

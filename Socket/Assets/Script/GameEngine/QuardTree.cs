@@ -250,7 +250,10 @@ namespace GameEngine
                     {
                         if (GraphicUtil.isInner(a, b))
                         {
-                            a.collision.onEnter();
+                            if (a.collision != null)
+                            {
+                                a.collision.onEnter();
+                            }
                         }
                     }
                 }
