@@ -5,17 +5,17 @@ namespace GameEngine
     public class QuardTree
     {
         const int MAX_RECTS = 10;
-        const int MAX_LEVEL = 5;
+        const int MAX_LEVEL = 2;
         public Rectangle bound;
         public int level;
 
-        LinkedList<Rectangle> objs = new LinkedList<Rectangle>();
-        List<QuardTree> trees = new List<QuardTree>();
-        public QuardTree(Rectangle bound, int lvl)
+        public LinkedList<Rectangle> objs = new LinkedList<Rectangle>();
+        public List<QuardTree> trees = new List<QuardTree>();
+        public QuardTree(Rectangle rect, int lvl)
         {
-
+            bound = rect;
+            level = lvl;
         }
-
 
         /// <summary>
         /// 获取象限，右上0,1,2,3，逆时针
@@ -31,11 +31,11 @@ namespace GameEngine
             {
                 if (right)
                 {
-                    return QuadrantType.LEFT_TOP;
+                    return QuadrantType.RIGHT_TOP;
                 }
                 else if (left)
                 {
-                    return QuadrantType.RIGHT_TOP;
+                    return QuadrantType.LEFT_TOP;
                 }
             }
             else if (bottom)
@@ -79,38 +79,16 @@ namespace GameEngine
         //拆分成新的四叉树
         void split()
         {
-            int sWidth = bound.width / 2;
-            int sHeight = bound.height / 2;
-            int col = 1;
-            int raw = 1;
+            int sWidth = bound.center.x - bound.origin.x;
+            int sHeight = bound.center.y - bound.origin.y;
 
-            if (sWidth < 1)
+            if (sWidth > 0
+                && sHeight > 0)
             {
-                sWidth = 1;
-                col = 1;
-            }
-            else
-            {
-                col = 2;
-            }
-
-            if (sHeight < 1)
-            {
-                sHeight = 1;
-                raw = 1;
-            }
-            else
-            {
-                raw = 2;
-            }
-
-            if (col == 2
-                && raw == 2)
-            {
-                trees.Add(new QuardTree(new Rectangle(bound.center.x, bound.origin.y, sWidth, sHeight), level + 1));
-                trees.Add(new QuardTree(new Rectangle(bound.origin.x, bound.origin.y, sWidth, sHeight), level + 1));
-                trees.Add(new QuardTree(new Rectangle(bound.origin.x, bound.center.y, sWidth, sHeight), level + 1));
                 trees.Add(new QuardTree(new Rectangle(bound.center.x, bound.center.y, sWidth, sHeight), level + 1));
+                trees.Add(new QuardTree(new Rectangle(bound.origin.x, bound.center.y, sWidth, sHeight), level + 1));
+                trees.Add(new QuardTree(new Rectangle(bound.origin.x, bound.origin.y, sWidth, sHeight), level + 1));
+                trees.Add(new QuardTree(new Rectangle(bound.center.x, bound.origin.y, sWidth, sHeight), level + 1));
 
             }
         }
@@ -214,7 +192,8 @@ namespace GameEngine
             {
                 root = this;
             }
-            List<Rectangle> removed = new List<Rectangle>();
+            List<Rectangle> removed1 = new List<Rectangle>();
+            List<Rectangle> removed2 = new List<Rectangle>();
             foreach (Rectangle rectangle in objs)
             {
                 int index = getIndex(rectangle);
@@ -223,8 +202,7 @@ namespace GameEngine
                 {
                     if (this != root)
                     {
-                        root.insert(rectangle);
-                        removed.Add(rectangle);
+                        removed1.Add(rectangle);
                     }
 
                     // 如果矩形属于该象限 且 该象限具有子象限，则
@@ -234,15 +212,22 @@ namespace GameEngine
                     index != -1)
                 {
                     trees[index].insert(rectangle);
-                    removed.Add(rectangle);
+                    removed2.Add(rectangle);
                 }
             }
 
-            for (int i = 0; i < removed.Count; i++)
+            for (int i = 0; i < removed1.Count; i++)
             {
-                objs.Remove(removed[i]);
+                root.insert(removed1[i]);
+                objs.Remove(removed1[i]);
             }
-            removed.Clear();
+            removed1.Clear();
+
+            for (int i = 0; i < removed2.Count; i++)
+            {
+                objs.Remove(removed2[i]);
+            }
+            removed2.Clear();
             foreach (QuardTree quardTree in trees)
             {
                 quardTree.refresh(root);
@@ -262,7 +247,7 @@ namespace GameEngine
                     }
                     else
                     {
-                        if (GraphicUtil.isInner(a, b))
+                        if (GraphicUtil.isOverlap(a, b))
                         {
                             if (a.collision != null)
                             {
@@ -277,6 +262,24 @@ namespace GameEngine
             {
                 trees[i].narrowPhase();
             }
+        }
+
+        /// <summary>
+        /// 获取边界内物体
+        /// </summary>
+        /// <returns>The inner count.</returns>
+        public int getInnerCount()
+        {
+            int ret = 0;
+            foreach (Rectangle rectangle in objs)
+            {
+                int index = getIndex(rectangle);
+                if(index != -1)
+                {
+                    ret += 1;
+                }
+            }
+            return ret;
         }
 
     }

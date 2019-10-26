@@ -6,6 +6,14 @@ namespace GameEngine
         public ICollision collision;
         public Rectangle(int x, int y, int w, int h)
         {
+            if(origin == null)
+            {
+                origin = new Point();
+            }
+            if(center == null)
+            {
+                center = new Point();
+            }
             origin.x = x;
             origin.y = y;
             width = w;
@@ -16,6 +24,7 @@ namespace GameEngine
         public Point origin;//left bottom
         public int width;
         public int height;
+
 
         /// <summary>
         /// 刷新坐标
