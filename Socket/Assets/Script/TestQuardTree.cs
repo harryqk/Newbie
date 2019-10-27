@@ -28,12 +28,13 @@ public class TestQuardTree : MonoBehaviour
         TrashMan.manageRecycleBin(bin);
         Rectangle bound = new Rectangle(0, 0, 800, 480);
         quardTree = new QuardTree(bound, 0);
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < 10; i++)
         {
-            for (int j = 0; j < 5; j++)
+            for (int j = 0; j < 10; j++)
             {
                 ObjectView objectView = TrashMan.spawn(ballPrefab.gameObject).GetComponent<ObjectView>();
                 Rectangle rect = new Rectangle(200 + i * 50, 120 + j * 50, 20, 20);
+                //Rectangle rect = new Rectangle(i * 50, j * 50, 20, 20);
                 objectView.setCollisionHandler(rect);
                 //objectView.transform.SetParent(this.transform, false);
                 Vector3 localPotion = new Vector3(objectView.rect.center.x, objectView.rect.center.y, 0);
@@ -52,6 +53,7 @@ public class TestQuardTree : MonoBehaviour
         {
             quardTree.refresh(null);
             quardTree.narrowPhase();
+
             showText();
         }
         GraphicUtil.drawQuardTree(quardTree);
@@ -59,7 +61,7 @@ public class TestQuardTree : MonoBehaviour
         {
             quardTree.refresh(null);
             //quardTree.narrowPhase();
-
+            showText();
             //Rectangle a = new Rectangle(0, 0, 20, 20);
 
             //Rectangle b = new Rectangle(19, 20, 20, 20);

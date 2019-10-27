@@ -161,7 +161,7 @@ namespace GameEngine
                 }
                 else
                 {
-                    Rectangle[] arr = rect.slice();
+                    Rectangle[] arr = rect.slice(bound);
                     for (int i = arr.Length - 1; i >= 0; i--)
                     {
                         index = getIndex(arr[i]);
@@ -170,6 +170,8 @@ namespace GameEngine
                         {
                             ret.AddLast(rectangle);
                         }
+
+
                     }
                 }
             }
@@ -235,7 +237,7 @@ namespace GameEngine
         }
 
         //narrow phase 碰撞
-        public void narrowPhase()
+        public void narrowPhase1()
         {
             foreach (Rectangle a in objs)
             {
@@ -264,6 +266,28 @@ namespace GameEngine
             }
         }
 
+        public void narrowPhase()
+        {
+            foreach (Rectangle a in objs)
+            {
+                LinkedList<Rectangle> list = getCheckList(a);
+                foreach(Rectangle rect in list)
+                {
+                    if (a.collision != null
+                        && GraphicUtil.isOverlap(a, rect)
+                        && !ReferenceEquals(a, rect))
+                    {
+                        a.collision.onEnter();
+                    }
+                }
+            }
+
+            for (int i = 0; i < trees.Count; i++)
+            {
+                trees[i].narrowPhase();
+            }
+        }
+
         /// <summary>
         /// 获取边界内物体
         /// </summary>
@@ -280,6 +304,21 @@ namespace GameEngine
                 }
             }
             return ret;
+        }
+
+        /// <summary>
+        /// Remove the specified rect.
+        /// </summary>
+        /// <param name="rect">Rect.</param>
+        public void remove(Rectangle rect)
+        {
+            if (!objs.Remove(rect))
+            {
+                for(int i = 0; i < trees.Count; i++)
+                {
+                    trees[i].remove(rect);
+                }
+            }
         }
 
     }

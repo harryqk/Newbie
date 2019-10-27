@@ -17,6 +17,7 @@ public class ObjectView : MonoBehaviour, ICollision
     {
         view = this.transform;
         img = this.transform.GetComponent<MeshRenderer>().material;
+        Random.InitState(System.DateTime.Now.Second);
     }
 
     public void setCollisionHandler(Rectangle r)
@@ -87,6 +88,14 @@ public class ObjectView : MonoBehaviour, ICollision
         }
         Vector2 vector2 = new Vector2(rect.center.x, rect.center.y);
         view.position = vector2;
+
+        //Rectangle bound = new Rectangle(0, 0, 800, 480);
+        //Rectangle[] arr = rect.slice(bound);
+        //for(int i = 0; i < arr.Length; i++) 
+        //{
+        //    GraphicUtil.drawRect(arr[i]); 
+        //}
+
     }
 
     int validateDir(int dir)

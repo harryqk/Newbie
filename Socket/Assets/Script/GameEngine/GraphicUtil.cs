@@ -38,5 +38,19 @@ namespace GameEngine
                 }
             }
         }
+
+        public static void drawRect(Rectangle rect) 
+        {
+            Vector3 v0 = new Vector3(rect.origin.x, rect.origin.y, 0);
+            Vector3 v1 = new Vector3(rect.origin.x + rect.width, rect.origin.y, 0);
+            Vector3 v2 = new Vector3(rect.origin.x + rect.width, rect.origin.y + rect.height, 0);
+            Vector3 v3 = new Vector3(rect.origin.x, rect.origin.y + rect.height, 0);
+
+            Debug.DrawLine(v0, v1, Color.green);
+            Debug.DrawLine(v1, v2, Color.green);
+            Debug.DrawLine(v2, v3, Color.green);
+            Debug.DrawLine(v3, v0, Color.green);
+        }
+
     }
 }
