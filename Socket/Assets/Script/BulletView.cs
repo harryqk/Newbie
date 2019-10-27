@@ -1,21 +1,28 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using GameEngine;
 using UnityEngine;
 
-public class BulletView : MonoBehaviour
+public class BulletView : MonoBehaviour, ICollision
 {
     RectTransform rTran;
     public bool valid = false;
-    IBulletRun bulletRunner;
+    public bool collision = false;
+    Rectangle bulletRunner;
     // Start is called before the first frame update
     void Start()
     {
         rTran = this.transform.GetComponent<RectTransform>();
     }
 
-    public void SetRunner(IBulletRun runner)
+    public void SetRunner(Rectangle runner)
     {
         bulletRunner = runner;
+    }
+
+    public void onCollision()
+    {
+        collision = true;
     }
 
     // Update is called once per frame
@@ -27,46 +34,26 @@ public class BulletView : MonoBehaviour
         }
         if (valid)
         {
-            rTran.anchoredPosition = bulletRunner.run();
+            rTran.anchoredPosition = new Vector2(bulletRunner.origin.x, bulletRunner.origin.y);
         }
-        if(!bulletRunner.isValid())
+        if(bulletRunner.origin.x > 800)
         {
-            valid = false;
-            rTran.anchoredPosition = Vector2.zero;
-            TrashMan.despawn(this.gameObject);
+            despawn();
         }
+
+        if (collision) 
+        {
+            despawn();
+        }
+
+
     }
 
-
-    private void OnTriggerEnter2D(Collider2D collision)
+    void despawn()
     {
-       //Debug.Log("i am bullet trigger, i hitted");
-       if(collision.tag.CompareTo(ObjectType.Player) == 0
-            && this.tag.CompareTo(ObjectType.EnemyBullet) == 0)
-        {
-            TrashMan.despawn(this.gameObject);
-            return;
-        }
-
-        if (collision.tag.CompareTo(ObjectType.Enemy) == 0
-      && this.tag.CompareTo(ObjectType.PlayerBullet) == 0)
-        {
-            TrashMan.despawn(this.gameObject);
-            return;
-        }
-
-        if (collision.tag.CompareTo(ObjectType.EnemyBullet) == 0
-      && this.tag.CompareTo(ObjectType.PlayerBullet) == 0)
-        {
-            TrashMan.despawn(this.gameObject);
-            return;
-        }
-
-        if (collision.tag.CompareTo(ObjectType.PlayerBullet) == 0
-&& this.tag.CompareTo(ObjectType.EnemyBullet) == 0)
-        {
-            TrashMan.despawn(this.gameObject);
-            return;
-        }
+        valid = false;
+        collision = false;
+        rTran.anchoredPosition = Vector2.zero;
+        TrashMan.despawn(this.gameObject);
     }
 }

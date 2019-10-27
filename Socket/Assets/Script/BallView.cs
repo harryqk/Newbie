@@ -104,7 +104,7 @@ public class BallView : MonoBehaviour
     {
         if (collision.tag.CompareTo(ObjectType.EnemyBullet) == 0)
         {
-            NetObject netObject = NetScene.getInstance().getBall(uid);
+            NetObject netObject = NetScene.getInstance().GetBall(uid);
             netObject.isDead = true;
             TrashMan.despawn(this.gameObject);
             return;

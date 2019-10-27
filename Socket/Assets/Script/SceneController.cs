@@ -53,7 +53,7 @@ public class SceneController : MonoBehaviour
             Connect();
         });
         btnClose.onClick.AddListener(delegate () {
-            NetScene.getInstance().stopGame();
+            NetScene.getInstance().StopGame();
             stopGame();
         });
         btnLogin.onClick.AddListener(delegate () {
@@ -139,7 +139,7 @@ public class SceneController : MonoBehaviour
         ball.uid = id;
         obj.transform.SetParent(this.transform, false);
         obj.transform.localPosition = Vector3.zero;
-        NetObject data = NetScene.getInstance().getBall(ball.uid);
+        NetObject data = NetScene.getInstance().GetBall(ball.uid);
         ball.setData(data);
 
     }
@@ -266,7 +266,7 @@ public class SceneController : MonoBehaviour
         {
             return;
         }
-        if (NetScene.getInstance().isDeath(NetScene.getInstance().MyId))
+        if (NetScene.getInstance().IsDeath(NetScene.getInstance().MyId))
         {
             return;
         }
@@ -282,7 +282,7 @@ public class SceneController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.J))
         {
-            NetScene.getInstance().shoot();
+            NetScene.getInstance().Shoot();
         }
     }
 
@@ -306,7 +306,7 @@ public class SceneController : MonoBehaviour
         {
             return;
         }
-        if (NetScene.getInstance().isDeath(NetScene.getInstance().MyId))
+        if (NetScene.getInstance().IsDeath(NetScene.getInstance().MyId))
         {
             return;
         }
@@ -320,7 +320,7 @@ public class SceneController : MonoBehaviour
 
     void onPointerUp(int dir)
     {
-        if (NetScene.getInstance().isDeath(NetScene.getInstance().MyId))
+        if (NetScene.getInstance().IsDeath(NetScene.getInstance().MyId))
         {
             return;
         }

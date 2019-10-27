@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
+using GameEngine;
 using UnityEngine;
 
 public class NetScene
@@ -19,9 +20,14 @@ public class NetScene
     public List<NetObject> listBall = new List<NetObject>();
 
 
+    LinkedList<NetObject> listBullet = new LinkedList<NetObject>();
+
+    LinkedList<NetObject> listEnemy = new LinkedList<NetObject>();
+
     public SocketClient client;
     public Queue<MessageVO> queMes = new Queue<MessageVO>();
-
+    Rectangle bound = new Rectangle(0, 0, 800, 480);
+    public QuardTree collisionTree;
     public long frame = 0;
 
     public int MyId = 0;
@@ -32,7 +38,7 @@ public class NetScene
     }
 
 
-    public NetObject getBall(int id)
+    public NetObject GetBall(int id)
     {
         for (int i = 0; i < listBall.Count; i++)
         {
@@ -47,7 +53,7 @@ public class NetScene
     }
 
 
-    public void createBall(int id)
+    public void CreateBall(int id)
     {
         NetObject ball = new NetObject();
         ball.uid = id;
@@ -60,7 +66,7 @@ public class NetScene
 
     }
 
-    public void delBall(int id)
+    public void DelBall(int id)
     {
         for (int i = 0; i < listBall.Count; i++)
         {
@@ -74,13 +80,13 @@ public class NetScene
         }
     }
 
-    public void delAllBall()
+    public void DelAllBall()
     {
         listBall.Clear();
     }
 
 
-    public void ballMove(int id, int dir)
+    public void BallMove(int id, int dir)
     {
         for (int i = 0; i < listBall.Count; i++)
         {
@@ -93,28 +99,87 @@ public class NetScene
         }
     }
 
-    public void updatePos()
+    public void UpdatePos()
     {
         for (int i = 0; i < listBall.Count; i++)
         {
             NetObject ball = listBall[i];
-            ball.updatePos();
+            ball.PerformMove();
         }
     }
 
-    public void startGame()
+
+    public void UpdateBulletPos()
+    {
+        List<NetObject> remove = new List<NetObject>();
+        foreach(NetObject obj in listBullet)
+        {
+            obj.PerformMove();
+            if(!GraphicUtil.isInner(obj.body, bound))
+            {
+                remove.Add(obj);
+            }
+        }
+
+        for(int i = 0; i < remove.Count; i++) 
+        {
+            collisionTree.remove(remove[i].body);
+            listBullet.Remove(remove[i]);
+        }
+        remove.Clear();
+
+
+    }
+
+    public void UpdateEnemyPos()
+    {
+        List<NetObject> remove = new List<NetObject>();
+        foreach (NetObject obj in listEnemy)
+        {
+            obj.PerformMove();
+            if (!GraphicUtil.isInner(obj.body, bound))
+            {
+                remove.Add(obj);
+            }
+        }
+
+        for (int i = 0; i < remove.Count; i++)
+        {
+            collisionTree.remove(remove[i].body);
+            listEnemy.Remove(remove[i]);
+        }
+        remove.Clear();
+    }
+
+    public void AddBullet(NetObject obj)
+    {
+        listBullet.AddLast(obj);
+    }
+
+    public void AddEnemy(NetObject obj)
+    {
+        listEnemy.AddLast(obj);
+    }
+
+    public void StartGame()
     {
         for (int i = 0; i < listBall.Count; i++)
         {
             NetObject ball = listBall[i];
             ball.SetMove(true);
         }
+
+        if(collisionTree == null) 
+        {
+            collisionTree = new QuardTree(bound, 0); 
+        }
+        collisionTree.clear();
+
     }
 
- 
     public void StartTreadUpdateByNetWork()
     {
-        threadU = new Thread(updateByNetWork);
+        threadU = new Thread(UpdateByNetWork);
         threadU.IsBackground = true;
         threadU.Start();
     }
@@ -127,7 +192,7 @@ public class NetScene
         }
     }
 
-    public void updateByNetWork()
+    public void UpdateByNetWork()
     {
         while (true)
         {
@@ -146,18 +211,18 @@ public class NetScene
     }
 
 
-    public void stopGame()
+    public void StopGame()
     {
         frame = 0;
         client.Close();
         CloseTreadU();
-        delAllBall();
+        DelAllBall();
         queMes.Clear();
     }
 
-    public void shoot()
+    public void Shoot()
     {
-        NetObject netObject = getBall(MyId);
+        NetObject netObject = GetBall(MyId);
         if (!netObject.isDead) 
         {
             NetMgr.getInstance().send(Protocol.Update, ByteUtil.intToBytes2(ActionType.shoot));
@@ -165,9 +230,9 @@ public class NetScene
 
     }
 
-    public bool isDeath(int id)
+    public bool IsDeath(int id)
     {
-        NetObject netObject = getBall(id);
+        NetObject netObject = GetBall(id);
         if (netObject.isDead)
         {
             return true;

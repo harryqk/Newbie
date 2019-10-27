@@ -1,13 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using GameEngine;
 using UnityEngine;
 
 public class NetObject
 {
-    int lastDir = 0;
+    public int lastDir = 0;
     const float sec = 5;
     public float speed = sp * updateFrequency;
-    const float sp = 6f;
+    public const float sp = 6f;
     bool startMove = false;
     public int uid = 0;
     public bool isMe = false;
@@ -15,7 +16,8 @@ public class NetObject
     public float posY = 0;
     const int updateFrequency = 20;
     public bool isDead = false;
-
+    public Rectangle body;
+    IMove mover;
     public int GetUid()
     {
         return uid;
@@ -23,6 +25,7 @@ public class NetObject
 
     public void SetUid(int id)
     {
+        mover = new PlayerMover();
         uid = id;
     }
 
@@ -31,7 +34,12 @@ public class NetObject
         isMe = value;
     }
 
-    public void updatePos()
+    public void PerformMove()
+    {
+        mover.Move(this);
+    }
+
+    public void UpdatePos()
     {
         if (lastDir == 1)
         {

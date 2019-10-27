@@ -1,10 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using GameEngine;
 using UnityEngine;
 
 public class LeftNormalShooter : IShoot
 {
     public GameObject shooter;
+    public Rectangle shooterPos;
     public void shoot()
     {
         GameObject obj = TrashMan.spawn("Bullet");
@@ -13,8 +15,9 @@ public class LeftNormalShooter : IShoot
         obj.transform.parent = shooter.transform.parent;
         obj.transform.position = shooter.transform.position;
         BulletLeftRunner bulletLeftRunner = new BulletLeftRunner();
-        bulletLeftRunner.bullet = bulletView.GetComponent<RectTransform>();
-        bulletView.SetRunner(bulletLeftRunner);
+        Rectangle body = new Rectangle(shooterPos.origin.x, shooterPos.origin.y, 20, 20);
+        NetScene.getInstance().collisionTree.insert(body);
+        bulletView.SetRunner(body);
         bulletView.valid = true;
     }
 }

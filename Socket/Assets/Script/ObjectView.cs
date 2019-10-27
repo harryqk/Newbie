@@ -30,7 +30,7 @@ public class ObjectView : MonoBehaviour, ICollision
     {
         testMove();
     }
-    public void onEnter()
+    public void onCollision()
     {
 
         //StopCoroutine(blink());

@@ -10,17 +10,17 @@ public static class Serializer
         {
             int id = ByteUtil.bytesToInt2(data, 0);
             NetScene.getInstance().SetMyId(id);
-            NetScene.getInstance().createBall(id);
+            NetScene.getInstance().CreateBall(id);
         }
         else if(protocol == Protocol.PlayerJoin)
         {
             int id = ByteUtil.bytesToInt2(data, 0);
-            NetScene.getInstance().createBall(id);
+            NetScene.getInstance().CreateBall(id);
         }
         else if (protocol == Protocol.PlayerLeave)
         {
             int id = ByteUtil.bytesToInt2(data, 0);
-            NetScene.getInstance().delBall(id);
+            NetScene.getInstance().DelBall(id);
         }
         else if (protocol == Protocol.AddPlayer)
         {
@@ -29,7 +29,7 @@ public static class Serializer
             for(int i = 0; i < num; i++)
             {
                 int id = ByteUtil.bytesToInt2(data, offset);
-                NetScene.getInstance().createBall(id);
+                NetScene.getInstance().CreateBall(id);
                 offset += 4;
             }
 
@@ -49,21 +49,23 @@ public static class Serializer
                 {
                     offset += 4;
                     int dir = ByteUtil.bytesToInt2(data, offset);
-                    NetScene.getInstance().ballMove(id, dir);
+                    NetScene.getInstance().BallMove(id, dir);
                 }
             }
 
-            NetScene.getInstance().updatePos();
+            NetScene.getInstance().UpdatePos();
 
         }
         else if (protocol == Protocol.StartGame)
         {
-            NetScene.getInstance().startGame();
+            NetScene.getInstance().StartGame();
         }
         else if (protocol == Protocol.Update)
         {
             actionSynSerialize(data);
-            NetScene.getInstance().updatePos();
+            NetScene.getInstance().UpdatePos();
+            NetScene.getInstance().UpdateBulletPos();
+            NetScene.getInstance().UpdateEnemyPos();
             return;
             int offset = 0;
             int haveData = ByteUtil.bytesToInt2(data, offset);
@@ -77,12 +79,12 @@ public static class Serializer
                     int id = ByteUtil.bytesToInt2(data, offset);
                     offset += 4;
                     int dir = ByteUtil.bytesToInt2(data, offset);
-                    NetScene.getInstance().ballMove(id, dir);
+                    NetScene.getInstance().BallMove(id, dir);
                     offset += 4;
                 }
             }
 
-            NetScene.getInstance().updatePos();
+            NetScene.getInstance().UpdatePos();
 
         }
     }
@@ -162,7 +164,7 @@ public static class Serializer
                 {
                     case ActionType.keyboardMove:
                         int dir = ByteUtil.bytesToInt2(data, offset);
-                        NetScene.getInstance().ballMove(id, dir);
+                        NetScene.getInstance().BallMove(id, dir);
                         offset += 4;
                         break;
                     case ActionType.shoot:

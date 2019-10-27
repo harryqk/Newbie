@@ -1,32 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using GameEngine;
 using UnityEngine;
 
-public class BulletRightRunner:IBulletRun
+public class BulletRightRunner:IMove
 {
     float speed = 360 * 1.2f * 1.2f;
-    public RectTransform bullet;
 
-    public Vector2 run()
+    public void Move(NetObject obj)
     {
-        if(bullet == null)
-        {
-            return Vector2.zero;
-        }
-        return new Vector2(bullet.anchoredPosition.x + Time.deltaTime * speed, bullet.anchoredPosition.y);
-    }
-
-
-    public bool isValid()
-    {
-        if (bullet == null)
-        {
-            return false;
-        }
-        if (bullet.anchoredPosition.x > 800)
-        {
-            return false;
-        }
-        return true;
+        obj.body.origin.x += speed;
     }
 }

@@ -79,8 +79,8 @@ namespace GameEngine
         //拆分成新的四叉树
         void split()
         {
-            int sWidth = bound.center.x - bound.origin.x;
-            int sHeight = bound.center.y - bound.origin.y;
+            float sWidth = bound.center.x - bound.origin.x;
+            float sHeight = bound.center.y - bound.origin.y;
 
             if (sWidth > 0
                 && sHeight > 0)
@@ -253,7 +253,7 @@ namespace GameEngine
                         {
                             if (a.collision != null)
                             {
-                                a.collision.onEnter();
+                                a.collision.onCollision();
                             }
                         }
                     }
@@ -277,7 +277,7 @@ namespace GameEngine
                         && GraphicUtil.isOverlap(a, rect)
                         && !ReferenceEquals(a, rect))
                     {
-                        a.collision.onEnter();
+                        a.collision.onCollision();
                     }
                 }
             }
@@ -318,6 +318,18 @@ namespace GameEngine
                 {
                     trees[i].remove(rect);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Clear this instance.
+        /// </summary>
+        public void clear()
+        {
+            objs.Clear();
+            for (int i = 0; i < trees.Count; i++)
+            {
+                trees[i].clear();
             }
         }
 

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using GameEngine;
 using UnityEngine;
 
 public class EnemyBallView : MonoBehaviour
@@ -11,6 +12,7 @@ public class EnemyBallView : MonoBehaviour
     public float startY = 0;
     LeftNormalShooter shooter;
     public bool start = false;
+    public Rectangle pos;
     // Start is called before the first frame update
     void Awake()
     {
@@ -26,12 +28,13 @@ public class EnemyBallView : MonoBehaviour
         if (start)
         {
             angle += Time.deltaTime * speed;
-            rTran.anchoredPosition = new Vector2(rTran.anchoredPosition.x, startY + Mathf.Sin(angle) * max);
+            //rTran.anchoredPosition = new Vector2(rTran.anchoredPosition.x, startY + Mathf.Sin(angle) * max);
+            rTran.anchoredPosition = new Vector2(pos.center.x, pos.center.y);
             if (lastFrame != NetScene.getInstance().frame
                 && NetScene.getInstance().frame % 100 == 0)
             {
                 lastFrame = NetScene.getInstance().frame;
-                shoot();
+                //shoot();
             }
         }
     }

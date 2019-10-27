@@ -4,7 +4,7 @@ namespace GameEngine
     public class Rectangle
     {
         public ICollision collision;
-        public Rectangle(int x, int y, int w, int h)
+        public Rectangle(float x, float y, float w, float h)
         {
             if(origin == null)
             {
@@ -22,8 +22,8 @@ namespace GameEngine
             center.y = origin.y + h / 2;
         }
         public Point origin;//left bottom
-        public int width;
-        public int height;
+        public float width;
+        public float height;
 
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace GameEngine
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
-        public void updatePos(int x, int y)
+        public void updatePos(float x, float y)
         {
             origin.x = x;
             origin.y = y;
@@ -41,49 +41,6 @@ namespace GameEngine
 
         public Point center;
 
-        /// <summary>
-        /// 将矩形对半切割
-        /// </summary>
-        /// <returns></returns>
-        public Rectangle[] slice()
-        {
-            int sWidth = width / 2;
-            int sHeight = height / 2;
-            int col = 1;
-            int raw = 1;
-
-            if (sWidth < 1)
-            {
-                sWidth = 1;
-                col = 1;
-            }
-            else
-            {
-                col = 2;
-            }
-
-            if (sHeight < 1)
-            {
-                sHeight = 1;
-                raw = 1;
-            }
-            else
-            {
-                raw = 2;
-            }
-            Rectangle[] rectangles = new Rectangle[col * raw];
-            for (int i = 0; i < col; i++)
-            {
-                for (int j = 0; j < raw; j++)
-                {
-                    rectangles[col * i + j] = new Rectangle(origin.x + sWidth * (i + 1), origin.y + sHeight * (j + 1), sWidth, sHeight);
-                }
-            }
-
-
-
-            return rectangles;
-        }
 
         public Rectangle[] slice(Rectangle bound)
         {
@@ -125,7 +82,7 @@ namespace GameEngine
             return null;
         }
 
-        public Rectangle[] sliceInTwoHorizontal(int x) 
+        public Rectangle[] sliceInTwoHorizontal(float x) 
         {
             Rectangle[] ret = new Rectangle[2];
             ret[0] = new Rectangle(origin.x, origin.y, x - origin.x, height);
@@ -146,7 +103,7 @@ namespace GameEngine
             return null;
         }
 
-        Rectangle[] sliceInTwoVertical(int y)
+        Rectangle[] sliceInTwoVertical(float y)
         {
             Rectangle[] ret = new Rectangle[2];
             ret[0] = new Rectangle(origin.x, origin.y, width, y - origin.y);
