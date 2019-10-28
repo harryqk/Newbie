@@ -7,7 +7,7 @@ namespace GameEngine
         public const int LEFT_TOP = 1;
         public const int LEFT_BOTTOM = 2;
         public const int RIGHT_BOTTOM = 3;
-        public const int Other = -1;
+        public const int OTHER = -1;
 
     }
 

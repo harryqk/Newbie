@@ -21,7 +21,7 @@ namespace GameEngine
         /// 获取象限，右上0,1,2,3，逆时针
         /// </summary>
         /// <returns></returns>
-        int getIndex(Rectangle rect)
+        int GetIndex(Rectangle rect)
         {
             bool bottom = rect.origin.y + rect.height <= bound.center.y;
             bool top = rect.origin.y >= bound.center.y;
@@ -72,12 +72,12 @@ namespace GameEngine
             //}
 
             // 如果物体跨越多个象限或超出区域，则放回-1
-            return QuadrantType.Other;
+            return QuadrantType.OTHER;
 
         }
 
         //拆分成新的四叉树
-        void split()
+        void Split()
         {
             float sWidth = bound.center.x - bound.origin.x;
             float sHeight = bound.center.y - bound.origin.y;
@@ -94,17 +94,17 @@ namespace GameEngine
         }
 
         //插入结点
-        public void insert(Rectangle rect)
+        public void Insert(Rectangle rect)
         {
             //如果超出边界
 
             // 如果该节点下存在子节点
             if (trees.Count > 0)
             {
-                int index = getIndex(rect);
+                int index = GetIndex(rect);
                 if (index != -1)
                 {
-                    trees[index].insert(rect);
+                    trees[index].Insert(rect);
                     return;
                 }
             }
@@ -117,16 +117,16 @@ namespace GameEngine
                 objs.Count > MAX_RECTS &&
                 level < MAX_LEVEL)
             {
-                split();
+                Split();
                 if (trees.Count > 0)
                 {
                     List<Rectangle> removed = new List<Rectangle>();
                     foreach (Rectangle rectangle in objs)
                     {
-                        int index = getIndex(rectangle);
+                        int index = GetIndex(rectangle);
                         if (index != -1)
                         {
-                            trees[index].insert(rectangle);
+                            trees[index].Insert(rectangle);
                             removed.Add(rectangle);
                         }
                     }
@@ -145,15 +145,15 @@ namespace GameEngine
         /// </summary>
         /// <param name="rect"></param>
         /// <returns></returns>
-        LinkedList<Rectangle> getCheckList(Rectangle rect)
+        LinkedList<Rectangle> GetCheckList(Rectangle rect)
         {
             LinkedList<Rectangle> ret = new LinkedList<Rectangle>();
             if (trees.Count > 0)
             {
-                int index = getIndex(rect);
+                int index = GetIndex(rect);
                 if (index != -1)
                 {
-                    LinkedList<Rectangle> innerRet = trees[index].getCheckList(rect);
+                    LinkedList<Rectangle> innerRet = trees[index].GetCheckList(rect);
                     foreach (Rectangle rectangle in innerRet)
                     {
                         ret.AddLast(rectangle);
@@ -161,11 +161,11 @@ namespace GameEngine
                 }
                 else
                 {
-                    Rectangle[] arr = rect.slice(bound);
+                    Rectangle[] arr = rect.Slice(bound);
                     for (int i = arr.Length - 1; i >= 0; i--)
                     {
-                        index = getIndex(arr[i]);
-                        LinkedList<Rectangle> innerRet = trees[index].getCheckList(rect);
+                        index = GetIndex(arr[i]);
+                        LinkedList<Rectangle> innerRet = trees[index].GetCheckList(rect);
                         foreach (Rectangle rectangle in innerRet)
                         {
                             ret.AddLast(rectangle);
@@ -188,7 +188,7 @@ namespace GameEngine
         /// <summary>
         /// 刷新
         /// </summary>
-        public void refresh(QuardTree root)
+        public void Refresh(QuardTree root)
         {
             if (root == null)
             {
@@ -198,7 +198,7 @@ namespace GameEngine
             List<Rectangle> removed2 = new List<Rectangle>();
             foreach (Rectangle rectangle in objs)
             {
-                int index = getIndex(rectangle);
+                int index = GetIndex(rectangle);
                 // 如果矩形不属于该象限，则将该矩形重新插入
                 if (!GraphicUtil.isInner(rectangle, bound))
                 {
@@ -213,14 +213,14 @@ namespace GameEngine
                 else if (trees.Count > 0 &&
                     index != -1)
                 {
-                    trees[index].insert(rectangle);
+                    trees[index].Insert(rectangle);
                     removed2.Add(rectangle);
                 }
             }
 
             for (int i = 0; i < removed1.Count; i++)
             {
-                root.insert(removed1[i]);
+                root.Insert(removed1[i]);
                 objs.Remove(removed1[i]);
             }
             removed1.Clear();
@@ -232,46 +232,17 @@ namespace GameEngine
             removed2.Clear();
             foreach (QuardTree quardTree in trees)
             {
-                quardTree.refresh(root);
+                quardTree.Refresh(root);
             }
         }
 
-        //narrow phase 碰撞
-        public void narrowPhase1()
+
+        public void NarrowPhase()
         {
             foreach (Rectangle a in objs)
             {
-                foreach (Rectangle b in objs)
-                {
-                    if (ReferenceEquals(a, b))
-                    {
-                        continue;
-                    }
-                    else
-                    {
-                        if (GraphicUtil.isOverlap(a, b))
-                        {
-                            if (a.collision != null)
-                            {
-                                a.collision.onCollision();
-                            }
-                        }
-                    }
-                }
-            }
-
-            for (int i = 0; i < trees.Count; i++)
-            {
-                trees[i].narrowPhase();
-            }
-        }
-
-        public void narrowPhase()
-        {
-            foreach (Rectangle a in objs)
-            {
-                LinkedList<Rectangle> list = getCheckList(a);
-                foreach(Rectangle rect in list)
+                LinkedList<Rectangle> list = GetCheckList(a);
+                foreach (Rectangle rect in list)
                 {
                     if (a.collision != null
                         && GraphicUtil.isOverlap(a, rect)
@@ -284,39 +255,21 @@ namespace GameEngine
 
             for (int i = 0; i < trees.Count; i++)
             {
-                trees[i].narrowPhase();
+                trees[i].NarrowPhase();
             }
-        }
-
-        /// <summary>
-        /// 获取边界内物体
-        /// </summary>
-        /// <returns>The inner count.</returns>
-        public int getInnerCount()
-        {
-            int ret = 0;
-            foreach (Rectangle rectangle in objs)
-            {
-                int index = getIndex(rectangle);
-                if(index != -1)
-                {
-                    ret += 1;
-                }
-            }
-            return ret;
         }
 
         /// <summary>
         /// Remove the specified rect.
         /// </summary>
         /// <param name="rect">Rect.</param>
-        public void remove(Rectangle rect)
+        public void Remove(Rectangle rect)
         {
             if (!objs.Remove(rect))
             {
-                for(int i = 0; i < trees.Count; i++)
+                for (int i = 0; i < trees.Count; i++)
                 {
-                    trees[i].remove(rect);
+                    trees[i].Remove(rect);
                 }
             }
         }
@@ -324,12 +277,12 @@ namespace GameEngine
         /// <summary>
         /// Clear this instance.
         /// </summary>
-        public void clear()
+        public void Clear()
         {
             objs.Clear();
             for (int i = 0; i < trees.Count; i++)
             {
-                trees[i].clear();
+                trees[i].Clear();
             }
         }
 
