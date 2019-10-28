@@ -66,7 +66,7 @@ public class SceneController : MonoBehaviour
         {
             //client.ClientWrite(Protocol.Move, "client send" + client.getLocalPort());
             Debug.Log("click start");
-            SpawnMgr.getStance().startSpawn = true;
+            ModelFactory.getStance().startSpawn = true;
             NetMgr.GetInstance().client.ClientWrite(Protocol.StartGame, "start game"); ;
         });
         btnShoot.onClick.AddListener(delegate ()
@@ -118,18 +118,9 @@ public class SceneController : MonoBehaviour
             onPointerDown(4);
         });
         Screen.fullScreenMode = FullScreenMode.Windowed;
-        TrashManRecycleBin bin = new TrashManRecycleBin();
-        bin.instancesToPreallocate = 20;
-        bin.prefab = ballPrefab.gameObject;
-        ballPrefab.tag = ObjectType.Player;
-        TrashMan.manageRecycleBin(bin);
 
-        TrashManRecycleBin binBullet = new TrashManRecycleBin();
-        binBullet.instancesToPreallocate = 200;
-        binBullet.prefab = bulletPrefab.gameObject;
-        TrashMan.manageRecycleBin(binBullet);
 
-        SpawnMgr.getStance().init();
+        ModelFactory.getStance().init();
         UnityEngine.Random.InitState(1);
     }
 
@@ -212,8 +203,8 @@ public class SceneController : MonoBehaviour
 
             if (NetScene.getInstance().frame % 350 == 0)
             {
-                SpawnMgr.getStance().spawn();
-                txtLog.text = SpawnMgr.getStance().curSpawn + "/" + SpawnMgr.maxSpawn;
+                ModelFactory.getStance().spawn();
+                txtLog.text = ModelFactory.getStance().curSpawn + "/" + ModelFactory.maxSpawn;
                 //txtLog.text = Random.Range(1, 100).ToString();
             }
         }
@@ -242,7 +233,7 @@ public class SceneController : MonoBehaviour
     {
         lastDir = 0;
         delAllBallView();
-        SpawnMgr.getStance().stop();
+        ModelFactory.getStance().stop();
     }
     int lastDir = 0;
     void keyboardMove()

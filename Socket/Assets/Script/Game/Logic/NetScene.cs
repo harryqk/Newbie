@@ -22,6 +22,8 @@ public class NetScene
 
     LinkedList<NetObject> listEnemy = new LinkedList<NetObject>();
 
+    Queue<NetObject> listSpawn = new Queue<NetObject>();
+
     public Queue<MessageVO> queMes = new Queue<MessageVO>();
     Rectangle bound = new Rectangle(0, 0, 800, 480);
     public QuardTree collisionTree;
@@ -60,6 +62,7 @@ public class NetScene
         }
         ball.isDead = false;
         listBall.Add(ball);
+        listSpawn.Enqueue(ball);
 
     }
 
@@ -151,11 +154,13 @@ public class NetScene
     public void AddBullet(NetObject obj)
     {
         listBullet.AddLast(obj);
+        listSpawn.Enqueue(obj);
     }
 
     public void AddEnemy(NetObject obj)
     {
         listEnemy.AddLast(obj);
+        listSpawn.Enqueue(obj);
     }
 
     public void StartGame()

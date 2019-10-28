@@ -30,16 +30,16 @@ namespace GameEngine
         {
             Debug.DrawLine(new Vector3(tree.bound.origin.x, tree.bound.origin.y, 0), new Vector3(tree.bound.origin.x + tree.bound.width, tree.bound.origin.y, 0));
             Debug.DrawLine(new Vector3(tree.bound.origin.x, tree.bound.origin.y, 0), new Vector3(tree.bound.origin.x, tree.bound.origin.y + tree.bound.height, 0));
-            if(tree.trees.Count > 0)
+            if (tree.trees.Count > 0)
             {
-                for(int i = 0; i < tree.trees.Count; i++)
+                for (int i = 0; i < tree.trees.Count; i++)
                 {
                     drawQuardTree(tree.trees[i]);
                 }
             }
         }
 
-        public static void drawRect(Rectangle rect) 
+        public static void drawRect(Rectangle rect)
         {
             Vector3 v0 = new Vector3(rect.origin.x, rect.origin.y, 0);
             Vector3 v1 = new Vector3(rect.origin.x + rect.width, rect.origin.y, 0);
@@ -50,6 +50,14 @@ namespace GameEngine
             Debug.DrawLine(v1, v2, Color.green);
             Debug.DrawLine(v2, v3, Color.green);
             Debug.DrawLine(v3, v0, Color.green);
+        }
+
+        public static Vector2 ToVector2(Point p)
+        {
+            Vector2 vector2 = Vector2.zero;
+            vector2.x = p.x;
+            vector2.y = p.y;
+            return vector2;
         }
 
     }

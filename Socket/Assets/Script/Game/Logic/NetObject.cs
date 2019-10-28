@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using GameEngine;
-using UnityEngine;
+﻿using GameEngine;
 
 public class NetObject
 {
@@ -17,6 +14,7 @@ public class NetObject
     const int updateFrequency = 20;
     public bool isDead = false;
     public Rectangle body;
+    public int type = 0;
     IMove mover;
     public int GetUid()
     {
